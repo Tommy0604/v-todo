@@ -5,7 +5,7 @@ import router from "./router/index";
 
 /* import the ant-design-vue */
 import Antd from "ant-design-vue";
-import "ant-design-vue/dist/antd.less";
+import 'ant-design-vue/dist/antd.variable.min.css';
 import "./styles/global.scss";
 
 const app = createApp(App);

@@ -13,7 +13,10 @@
         </span>
       </div>
     </div>
-    <div class="toolbar-right"></div>
+    <div class="toolbar-right">
+      <input class="theme-box" type="color" :value="colorState.primaryColor"
+        @input="e => onColorChange('primaryColor', e)" />
+    </div>
   </div>
 </template>
 
@@ -25,9 +28,10 @@ export default {
 
 <script setup lang="ts">
 import { dayjs, IconFont } from "../../shared";
-import { computed, ref } from "vue";
+import { computed, ref, reactive, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { TodoType } from "../../models/todo";
+import { ConfigProvider } from "ant-design-vue";
 
 let route = useRoute();
 let iconType = ref<string>();
@@ -55,6 +59,27 @@ let title = computed(() => {
   }
 });
 
+const colorState = reactive({
+  primaryColor: '#42b883',
+  errorColor: '#ff4d4f',
+  warningColor: '#faad14',
+  successColor: '#52c41a',
+  infoColor: '#1890ff',
+});
+
+onMounted(() => {
+  ConfigProvider.config({
+    theme: colorState,
+  });
+})
+
+const onColorChange = (type: string, e: any) => {
+  Object.assign(colorState, { [type]: e.target.value });
+  ConfigProvider.config({
+    theme: colorState,
+  });
+};
+
 </script>
 
 <style lang="scss">
@@ -75,7 +100,6 @@ let title = computed(() => {
     margin-right: 20px;
   }
 }
-
 
 .toolbar-title {
   align-items: center;
@@ -114,5 +138,31 @@ let title = computed(() => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.theme-box {
+  appearance: none;
+  width: 36px;
+  height: 36px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.theme-box::-webkit-color-swatch,
+.theme-box::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.theme-box::-webkit-color-swatch-wrapper {
+  box-shadow: -8px -8px 10px rgba(255, 255, 255, 1), 8px 8px 25px rgb(0, 0, 0, 15%);
+  border: 8px solid #faf9f8;
+  border-radius: 50%;
+}
+
+.theme-box::-webkit-color-swatch {
+  box-shadow: -2px -2px 2px rgb(255 255 255), 2px 2px 4px rgb(0 0 0 / 15%);
+  border-radius: 50%;
+  border: none;
 }
 </style>
