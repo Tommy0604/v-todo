@@ -15,15 +15,17 @@
         </div>
       </div>
       <div class="tool-remind">
-        <DropdownCalendar :iconName="'icon-remind'" :calendarList="remindList" @click-menu="clickRemind" />
+        <DropdownCalendar :iconName="'icon-remind'" :calendarList="remindList" @clickMenu="clickRemind"
+          :showTimePick="true" />
 
         <div class="due-date-text">
           <span class="date"> {{ remindText || "" }} </span>
         </div>
       </div>
-      <div class="tool-repeat">
+      <!-- TODO -->
+      <!-- <div class="tool-repeat">
         <icon-font type="icon-repeat" />
-      </div>
+      </div> -->
     </div>
   </a-layout-footer>
 </template>
@@ -56,7 +58,7 @@ let title = ref('');
 let dropdownRef = ref();
 let overdueTime = ref<Dayjs>();
 let remindTime = ref<Dayjs>();
-let pickDateText = ref<string>(DateType.TODAY),
+let pickDateText = ref<string>(),
   remindText = ref<string>();
 let calendarList: Calendar[] = [{
   key: DateType.TODAY,
@@ -97,9 +99,16 @@ const addTodoItem = () => {
     remindTime: remindTime.value?.format()
   }
   addTodo(obj);
-  title.value = '';
-  remindText.value = '';
+  initParams();
 };
+
+const initParams = () => {
+  title.value = '';
+  pickDateText.value = '';
+  overdueTime.value = undefined;
+  remindText.value = '';
+  remindTime.value = undefined;
+}
 
 const onFocus = (event) => (dropdownVisible.value = true);
 const onBlur = (event) => {
@@ -132,29 +141,25 @@ function getRemindText() {
   });
 }
 
-function clickDue(e) {
+function clickDue(type: DateType, date?: Dayjs) {
   const dueType = [DateType.TODAY, DateType.TOMORROW, DateType.NEXT_WEEK];
-  if (dueType.some((s) => s === e.key)) {
-    overdueTime.value = datePipe(e.key as DateType).endOf('d');
-    pickDateText.value = e.key.toString();
-  } else {
+  const dateFormat = dueType.some((s) => s === type) ? datePipe(type) : date;
 
-  }
+  overdueTime.value = dateFormat?.endOf('d');
+  pickDateText.value = type.toString();
 }
 
-function clickRemind(e) {
-  if (e.key as DateType === DateType.LATER_TODAY) {
-    const _remindTime = datePipe(e.key);
-    remindTime.value = dayjs(_remindTime.format('YYYY-MM-DD HH:mm'));
-    remindText.value = calendarPipe(_remindTime.format('YYYY-MM-DD HH:mm'));
-  }
-  else if ([DateType.TOMORROW, DateType.NEXT_WEEK].includes(e.key)) {
-    const _remindTime = datePipe(e.key);
-    remindTime.value = dayjs(_remindTime.format('YYYY-MM-DD 9:00'));
-    remindText.value = calendarPipe(_remindTime.format('YYYY-MM-DD 9:00'));
-  } else {
+function clickRemind(type: DateType, date?: Dayjs) {
+  const _remindTime = datePipe(type);
+  const dateFormat = type === DateType.LATER_TODAY ?
+    _remindTime.format('YYYY-MM-DD HH:mm')
+    : [DateType.TOMORROW, DateType.NEXT_WEEK].includes(type) ?
+      _remindTime.format('YYYY-MM-DD 9:00')
+      : date?.format('YYYY-MM-DD HH:mm');
 
-  }
+  console.log('remindTime ==========>', dateFormat);
+  remindTime.value = dayjs(dateFormat);
+  remindText.value = calendarPipe(dateFormat);
 }
 
 </script>

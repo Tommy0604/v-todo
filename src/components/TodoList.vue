@@ -1,8 +1,7 @@
 <template>
-  <div>
-    <!-- <modal :showModal="showModal"></modal> -->
-    <!-- <button v-if="active < all" @click="clear">清理</button> -->
-    <!-- <div v-if="todoList.length"> -->
+  <!-- <modal :showModal="showModal"></modal> -->
+  <!-- <button v-if="active < all" @click="clear">清理</button> -->
+  <template v-if="todoList.length">
     <transition-group name="flip-list" tag="ul" class="container">
       <div class="taskItem" v-for="(todo, i) in todoList" :key="todo.id">
         <a-dropdown :trigger="['contextmenu']" overlayClassName="task-item">
@@ -13,7 +12,7 @@
               <div class="metaDataInfo">
                 <span class="metaDataInfo-group" v-if="todo.overdueTime">
                   <span class="taskItemInfo-date" :class="isOverdue(todo.overdueTime)">
-                    <icon-font :type="'icon-calendar'" :style="{ 'font-size':'1.6rem' }" />
+                    <icon-font :type="'icon-calendar'" :style="{ 'font-size': '1.6rem' }" />
                     <span class="taskItemInfo-label">{{ overdueFormat(todo.overdueTime) }}</span>
                     <!-- <img :src="getIconUrl('calendar')" alt=""> -->
 
@@ -21,7 +20,7 @@
                 </span>
                 <span class="metaDataInfo-group" v-if="todo.remindTime">
                   <span class="taskItemInfo-reminder">
-                    <icon-font :type="'icon-remind'" :style="{ 'font-size':'1.6rem' }" />
+                    <icon-font :type="'icon-remind'" :style="{ 'font-size': '1.6rem' }" />
                     <span class="taskItemInfo-label">{{ calendarPipe(todo.remindTime) }}</span>
                   </span>
                 </span>
@@ -39,14 +38,16 @@
         </a-dropdown>
       </div>
     </transition-group>
-    <!-- </div> -->
-    <!-- <div v-else>暂无数据</div> -->
-    <!-- <div>
-      全选
+  </template>
+  <template v-else>
+    <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_iikbn1ww.json" background="rgba(0, 0, 0, 0)"
+      speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>
+  </template>
+
+  <!-- <div> 全选
       <input type="checkbox" v-model="allDone" />
       <span> {{ active }} / {{ all }} </span>
     </div> -->
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -118,7 +119,7 @@ function searchTodoList(todoType: string) {
               const current = dayjs();
 
               if (+current >= +dayjs(item.remindTime)) {
-                clearInterval(intervalId);
+                clearTimeout(intervalId);
                 item.reminded = true;
                 let audio = new Audio(
                   new URL(`../assets/audio/popup.wav`, import.meta.url).href);
@@ -185,12 +186,12 @@ button {
   background-color: $--bg-primary;
   // box-shadow: 0px 0.3px 0.9px rgb(0 0 0 / 10%), 0px 1.6px 3.6px rgb(0 0 0 / 10%);
   box-shadow: 0px 0.3px 0.9px $--bg-shadow, 0px 1.6px 3.6px $--bg-shadow;
-  
-  margin-top: 8px;
+
+  margin-bottom: 8px;
   border-radius: 4px;
 
   &:first-child {
-    margin-top: 0;
+    margin-top: 8;
   }
 
   .taskItem-ctx {
