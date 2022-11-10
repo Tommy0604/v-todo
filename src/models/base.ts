@@ -5,3 +5,12 @@ export enum DateType {
   OTHER_TIME = 'other time',
   LATER_TODAY = "later today",
 }
+
+export enum RepeatType {
+  DAILY = 'Daily',
+  WEEKDAYS = 'Weekdays',
+  WEEKLY = 'Weekly',
+  MONTHLY = 'Monthly',
+  YEARLY = 'Yearly',
+  // CUSTOM = 'Custom' TODO
+}

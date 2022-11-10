@@ -1,7 +1,7 @@
 <template>
   <!-- <modal :showModal="showModal"></modal> -->
   <!-- <button v-if="active < all" @click="clear">清理</button> -->
-  <template v-if="todoList.length">
+  <div v-if="todoList.length">
     <transition-group name="flip-list" tag="ul" class="container">
       <div class="taskItem" v-for="(todo, i) in todoList" :key="todo.id">
         <a-dropdown :trigger="['contextmenu']" overlayClassName="task-item">
@@ -14,8 +14,6 @@
                   <span class="taskItemInfo-date" :class="isOverdue(todo.overdueTime)">
                     <icon-font :type="'icon-calendar'" :style="{ 'font-size': '1.6rem' }" />
                     <span class="taskItemInfo-label">{{ overdueFormat(todo.overdueTime) }}</span>
-                    <!-- <img :src="getIconUrl('calendar')" alt=""> -->
-
                   </span>
                 </span>
                 <span class="metaDataInfo-group" v-if="todo.remindTime">
@@ -26,7 +24,6 @@
                 </span>
               </div>
             </button>
-
           </div>
           <template #overlay>
             <a-menu>
@@ -38,11 +35,11 @@
         </a-dropdown>
       </div>
     </transition-group>
-  </template>
-  <template v-else>
+  </div>
+  <div class="flex-center" v-else>
     <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_iikbn1ww.json" background="rgba(0, 0, 0, 0)"
       speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>
-  </template>
+  </div>
 
   <!-- <div> 全选
       <input type="checkbox" v-model="allDone" />
@@ -58,7 +55,6 @@ import { useTodos } from "./todoLIst.service";
 import { useRouter, useRoute, onBeforeRouteLeave } from "vue-router";
 import { Dayjs, dayjs, IconFont, } from "../shared";
 import { useDate } from "../services/date.service";
-// isToday, isTomorrow
 let { todos, clear, showModal } = useTodos();
 let { calendarPipe } = useDate();
 

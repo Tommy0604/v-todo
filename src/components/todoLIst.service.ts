@@ -11,6 +11,7 @@ type AddOptions = {
   createTime?: string;
   overdueTime?: string;
   remindTime?: string;
+  repeatType?: string;
 };
 
 //TODO 待转到 firebase
@@ -25,6 +26,7 @@ function useTodos() {
     createTime = dayjs().format(),
     overdueTime,
     remindTime,
+    repeatType,
   }: AddOptions) {
     if (!title.trim()) {
       showModal.value = true;
@@ -41,6 +43,7 @@ function useTodos() {
       createTime,
       overdueTime,
       remindTime,
+      repeatType
     });
   }
   function clear() {

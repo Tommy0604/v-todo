@@ -5,15 +5,18 @@ function useDate() {
   function datePipe(dateType: DateType): Dayjs {
     let date = dayjs();
     switch (dateType) {
-      case DateType.TODAY: break;
+      case DateType.TODAY:
+        break;
       case DateType.TOMORROW:
         date = dayjs().add(1, "day");
         break;
       case DateType.NEXT_WEEK:
-        date = dayjs().add(1, 'week').day(1);
+        date = dayjs().add(1, "week").day(1);
         break;
       case DateType.LATER_TODAY:
-        date = dayjs().add(dayjs().minute() >= 30 ? 4 : 3, 'h').startOf('h');
+        date = dayjs()
+          .add(dayjs().minute() >= 30 ? 4 : 3, "h")
+          .startOf("h");
         break;
       default:
         break;

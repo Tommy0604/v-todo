@@ -5,8 +5,9 @@ export interface Todo {
   type: string;
   createTime: string;
   overdueTime?: string;
-  remindTime?: string; 
+  remindTime?: string;
   reminded?: boolean;
+  repeatType?: string;
 }
 
 export enum TodoType {
@@ -15,3 +16,13 @@ export enum TodoType {
   PLANS = "plans",
   COMPLETED = "completed",
 }
+
+export interface Calendar {
+  icon: string;
+  key: string;
+  text: string;
+  secondaryText?: string;
+}
+
+export interface Remind extends Calendar {}
+export interface Repeat extends Calendar {}

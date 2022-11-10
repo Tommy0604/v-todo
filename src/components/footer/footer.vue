@@ -8,7 +8,7 @@
     <div class="tools" v-if="ishowTool" :class="ishowTool ? 'enter-action' : 'leave-active'">
       <div class="tool-calendar">
         <DropdownCalendar ref="dropdownRef" :iconName="'icon-calendar'" :calendarList="calendarList"
-          @click-menu="clickDue" />
+          @clickMenu="clickDue" :showCustomItem="true" />
 
         <div class="due-date-text">
           <span class="date"> {{ pickDateText || "" }} </span>
@@ -16,16 +16,20 @@
       </div>
       <div class="tool-remind">
         <DropdownCalendar :iconName="'icon-remind'" :calendarList="remindList" @clickMenu="clickRemind"
-          :showTimePick="true" />
+          :showTimePick="true" :showCustomItem="true" />
 
         <div class="due-date-text">
           <span class="date"> {{ remindText || "" }} </span>
         </div>
       </div>
       <!-- TODO -->
-      <!-- <div class="tool-repeat">
-        <icon-font type="icon-repeat" />
-      </div> -->
+      <div class="tool-repeat">
+        <DropdownCalendar :iconName="'icon-repeat'" :calendarList="repeadList" @clickMenu="clickRepeat" />
+
+        <div class="due-date-text">
+          <span class="date"> {{ repeatText || "" }} </span>
+        </div>
+      </div>
     </div>
   </a-layout-footer>
 </template>
@@ -40,9 +44,10 @@ import { defineComponent, ref, onMounted, watch, computed, ComputedRef } from "v
 import { useRouter, useRoute, onBeforeRouteUpdate } from "vue-router";
 import { useTodos } from "../todoLIst.service";
 import { useDate } from "../../services/date.service";
-import { DateType, TodoType } from "../../models";
+import { Calendar, DateType, Remind, Repeat, RepeatType, TodoType } from "../../models";
 import { IconFont, PlusOutlined, dayjs, Dayjs } from "../../shared";
-import DropdownCalendar, { Calendar, Remind } from "../dropdown/dropdown.vue";
+import DropdownCalendar from "../dropdown/dropdown.vue";
+import { func } from "vue-types";
 
 let { todos, addTodo, clear, showModal } = useTodos();
 let { datePipe, calendarPipe } = useDate();
@@ -56,13 +61,16 @@ let ishow = ref<boolean>(false), // comp switch
 
 let title = ref('');
 let dropdownRef = ref();
-let overdueTime = ref<Dayjs>();
-let remindTime = ref<Dayjs>();
+let overdueTime = ref<Dayjs>(),
+  remindTime = ref<Dayjs>();
+let repeatType = ref<string>();
+
 let pickDateText = ref<string>(),
-  remindText = ref<string>();
+  remindText = ref<string>(),
+  repeatText = ref<string>();
 let calendarList: Calendar[] = [{
   key: DateType.TODAY,
-  icon: 'daily',
+  icon: 'today',
   text: 'Today',
   secondaryText: 'Tue'
 }, {
@@ -78,6 +86,27 @@ let calendarList: Calendar[] = [{
 }];
 
 let remindList: ComputedRef<Remind[]> = getRemindText();
+let repeadList: Repeat[] = [{
+  key: RepeatType.DAILY,
+  icon: 'daily',
+  text: RepeatType.DAILY,
+}, {
+  key: RepeatType.WEEKDAYS,
+  icon: 'weekdays',
+  text: RepeatType.WEEKDAYS,
+}, {
+  key: RepeatType.WEEKLY,
+  icon: 'weekly',
+  text: RepeatType.WEEKLY,
+}, {
+  key: RepeatType.MONTHLY,
+  icon: 'monthly',
+  text: RepeatType.MONTHLY,
+}, {
+  key: RepeatType.YEARLY,
+  icon: 'yearly',
+  text: RepeatType.YEARLY,
+},];
 let dropdownVisible = ref();
 
 watch(
@@ -96,7 +125,8 @@ const addTodoItem = () => {
     title: title.value,
     type: todoType.value,
     overdueTime: overdueTime.value?.format(),
-    remindTime: remindTime.value?.format()
+    remindTime: remindTime.value?.format(),
+    repeatType: repeatType.value
   }
   addTodo(obj);
   initParams();
@@ -108,6 +138,8 @@ const initParams = () => {
   overdueTime.value = undefined;
   remindText.value = '';
   remindTime.value = undefined;
+  repeatText.value = '';
+  repeatType.value= undefined;
 }
 
 const onFocus = (event) => (dropdownVisible.value = true);
@@ -141,25 +173,28 @@ function getRemindText() {
   });
 }
 
-function clickDue(type: DateType, date?: Dayjs) {
+function clickDue(type: string, date?: Dayjs): void {
   const dueType = [DateType.TODAY, DateType.TOMORROW, DateType.NEXT_WEEK];
-  const dateFormat = dueType.some((s) => s === type) ? datePipe(type) : date;
+  const dateFormat = dueType.some((s) => s === type) ? datePipe(type as DateType) : date;
 
   overdueTime.value = dateFormat?.endOf('d');
-  pickDateText.value = type.toString();
+  pickDateText.value = type;
 }
 
-function clickRemind(type: DateType, date?: Dayjs) {
-  const _remindTime = datePipe(type);
+function clickRemind(type: string, date?: Dayjs): void {
+  const _remindTime = datePipe(type as DateType);
   const dateFormat = type === DateType.LATER_TODAY ?
     _remindTime.format('YYYY-MM-DD HH:mm')
-    : [DateType.TOMORROW, DateType.NEXT_WEEK].includes(type) ?
+    : [DateType.TOMORROW, DateType.NEXT_WEEK].includes(type as DateType) ?
       _remindTime.format('YYYY-MM-DD 9:00')
       : date?.format('YYYY-MM-DD HH:mm');
 
-  console.log('remindTime ==========>', dateFormat);
   remindTime.value = dayjs(dateFormat);
   remindText.value = calendarPipe(dateFormat);
+}
+
+function clickRepeat(type: string): void {
+  repeatText.value = repeatType.value = type;
 }
 
 </script>
@@ -178,7 +213,8 @@ $class-prefix: "tool";
   font-size: 24px;
 
   .tool-calendar,
-  .tool-remind {
+  .tool-remind,
+  .tool-repeat {
     display: flex;
     align-items: center;
   }

@@ -12,32 +12,34 @@
             </span>
           </div>
         </a-menu-item>
-        <a-menu-divider />
-        <a-sub-menu key="sub1" @mousedown="(e) => e.preventDefault()">
-          <template #icon>
-            <img :src="getIconUrl('pick-date')" alt="" />
-          </template>
-          <template #title>
-            Pick a date
-          </template>
-          <a-menu-item :key="DateType.OTHER_TIME" @mouseenter="duePickerOpen = true"
-            @mouseleave="duePickerOpen = false">
-            <div class="calendar-box">
-              <a-calendar :fullscreen="false" @change="onDateChange" @click="(e) => e.stopPropagation()"
-                @select="select" @panelChange="panelChange" />
-              <div class="calendar-footer">
-                <div class="time-pick" v-if="showTimePick">
-                  <a-time-picker ref="timePickRef" use12-hours :value="timePick" :minute-step="20" format="HH:mm"
-                    :disabledHours="disabledHours" :hideDisabledOptions="true" @focus="timeFocus" @blur="timeBlur"
-                    @change="(time) => timePick = time" />
-                </div>
-                <div class="btn-save">
-                  <a-button type="primary" @click="onSave">Save</a-button>
+        <template v-if="showCustomItem">
+          <a-menu-divider />
+          <a-sub-menu key="sub1" @mousedown="(e) => e.preventDefault()">
+            <template #icon>
+              <img :src="getIconUrl('pick-date')" alt="" />
+            </template>
+            <template #title>
+              Pick a date
+            </template>
+            <a-menu-item :key="DateType.OTHER_TIME" @mouseenter="duePickerOpen = true"
+              @mouseleave="duePickerOpen = false">
+              <div class="calendar-box">
+                <a-calendar :fullscreen="false" @change="onDateChange" @click="(e) => e.stopPropagation()"
+                  @select="select" @panelChange="panelChange" />
+                <div class="calendar-footer">
+                  <div class="time-pick" v-if="showTimePick">
+                    <a-time-picker ref="timePickRef" use12-hours :value="timePick" :minute-step="20" format="HH:mm"
+                      :disabledHours="disabledHours" :hideDisabledOptions="true" @focus="timeFocus" @blur="timeBlur"
+                      @change="(time) => timePick = time" />
+                  </div>
+                  <div class="btn-save">
+                    <a-button type="primary" @click="onSave">Save</a-button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </a-menu-item>
-        </a-sub-menu>
+            </a-menu-item>
+          </a-sub-menu>
+        </template>
       </a-menu>
     </template>
   </a-dropdown>
@@ -47,21 +49,13 @@
 export default {
   name: "DropdownCalendar",
 };
-export interface Calendar {
-  icon: string;
-  key: DateType;
-  text: string;
-  secondaryText: string;
-}
-
-export interface Remind extends Calendar { }
 </script>
 <script lang="ts" setup>
 import { IconFont, range } from "../../shared";
 import dayjs, { Dayjs } from "dayjs";
 import { ref } from "vue";
-import { DateType } from "../../models";
 import { useDate } from "../../services/date.service";
+import { Calendar, DateType, RepeatType } from "../../models";
 
 let { datePipe } = useDate();
 
@@ -77,13 +71,14 @@ let iconRef = ref(),
 let subMenuActionType = ref<'click' | 'hover'>('hover');
 
 const emit = defineEmits<{
-  (e: 'clickMenu', type: DateType, value?: Dayjs): void,
+  (e: 'clickMenu', type: string, value?: Dayjs): void,
 }>();
 
 let props = defineProps<{
   calendarList: Array<Calendar>,
   iconName: string,
   showTimePick?: boolean,
+  showCustomItem?: boolean,
 }>();
 
 const onFocus = (event) => (dropdownVisible.value = true);
@@ -93,7 +88,7 @@ const onBlur = (event) => {
 };
 
 const clickMenu = (e) => {
-  [DateType.TODAY, DateType.LATER_TODAY, DateType.TOMORROW, DateType.NEXT_WEEK].includes(e.key) && emit('clickMenu', e.key);
+  [DateType.TODAY, DateType.LATER_TODAY, DateType.TOMORROW, DateType.NEXT_WEEK, ...Object.values(RepeatType)].includes(e.key) && emit('clickMenu', e.key);
 
   if (e.keyPath.length < 2) {
     e.domEvent.stopPropagation();
