@@ -17,11 +17,11 @@
         <a-layout-content>
           <router-view v-slot="{ Component, route }">
             <transition name="route" mode="out-in" appear>
-              <KeepAlive>
-                <div class="todo-content" :key="route.name">
+              <div class="todo-content" :key="route.name">
+                <KeepAlive>
                   <component :is="Component" />
-                </div>
-              </KeepAlive>
+                </KeepAlive>
+              </div>
             </transition>
           </router-view>
         </a-layout-content>

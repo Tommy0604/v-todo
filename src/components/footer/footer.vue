@@ -121,14 +121,14 @@ watch(
 );
 
 const addTodoItem = () => {
-  let obj = {
+  let newTodo = {
     title: title.value,
     type: todoType.value,
     overdueTime: overdueTime.value?.format(),
     remindTime: remindTime.value?.format(),
     repeatType: repeatType.value
   }
-  addTodo(obj);
+  addTodo(newTodo);
   initParams();
 };
 

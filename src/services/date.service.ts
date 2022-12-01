@@ -37,7 +37,17 @@ function useDate() {
     });
   }
 
-  return { datePipe, calendarPipe };
+  function overduePipe(date: string | Dayjs) {
+    return dayjs(date).locale("en").calendar(null, {
+      sameDay: "[Today]",
+      nextDay: "[Tomorrow]",
+      nextWeek: "ddd, MMMM D",
+      lastDay: "h:mm A, MMMM D",
+      lastWeek: "h:mm A, ddd, MMMM D",
+      sameElse: "h:mm A, MMMM D, YYYY",
+    })
+  }
+  return { datePipe, calendarPipe ,overduePipe};
 }
 
 export { useDate };

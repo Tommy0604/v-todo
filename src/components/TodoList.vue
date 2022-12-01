@@ -13,7 +13,7 @@
                 <span class="metaDataInfo-group" v-if="todo.overdueTime">
                   <span class="taskItemInfo-date" :class="isOverdue(todo.overdueTime)">
                     <icon-font :type="'icon-calendar'" :style="{ 'font-size': '1.6rem' }" />
-                    <span class="taskItemInfo-label">{{ overdueFormat(todo.overdueTime) }}</span>
+                    <span class="taskItemInfo-label">{{ overduePipe(todo.overdueTime) }}</span>
                   </span>
                 </span>
                 <span class="metaDataInfo-group" v-if="todo.remindTime">
@@ -48,15 +48,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, getCurrentInstance, computed, watchEffect } from "vue";
+import { ref, watch, computed, onActivated, onDeactivated } from "vue";
 // import modal from "./modal.vue";
-import { Todo, TodoType } from "../models";
+import { RepeatType, Todo, TodoType } from "../models";
 import { useTodos } from "./todoLIst.service";
 import { useRouter, useRoute, onBeforeRouteLeave } from "vue-router";
 import { Dayjs, dayjs, IconFont, } from "../shared";
 import { useDate } from "../services/date.service";
-let { todos, clear, showModal } = useTodos();
-let { calendarPipe } = useDate();
+let { todos, clear, showModal, addTodo } = useTodos();
+let { calendarPipe, overduePipe } = useDate();
 
 let props = defineProps({
   completedList: [],
@@ -79,6 +79,7 @@ let allDone = computed({
     });
   },
 });
+let intervalId = ref();
 
 watch(
   [route, todos.value, todos],
@@ -103,34 +104,81 @@ function searchTodoList(todoType: string) {
       break;
     default: {
       todoList.value = todos.value.filter(
-        (item: Todo) => item.type.toLocaleString() === todoType && !item.done
+        (item: Todo) => item.type.toLocaleString() === todoType && !item.done && !item.overdue
       );
       todoList.value.forEach((item: Todo) => {
         if (!!item.remindTime && !item.reminded) {
-          let time = new Date(),
-            intervalId,
-            secondsRemaining = (60 - time.getSeconds()) * 1000; // Starting from 0 seconds 
-          setTimeout(() => {
-            intervalId = setTimeout(function tick() {
-              const current = dayjs();
-
-              if (+current >= +dayjs(item.remindTime)) {
-                clearTimeout(intervalId);
-                item.reminded = true;
-                let audio = new Audio(
-                  new URL(`../assets/audio/popup.wav`, import.meta.url).href);
-                audio.play();
-              } else {
-                intervalId = setTimeout(tick, 30000);
-              }
-            }, 30000);
-          }, secondsRemaining);
+          remindHander(item)
         }
       });
     }
       break;
   }
 }
+
+function remindHander(todo: Todo) {
+  let time = new Date(),
+    intervalId,
+    secondsRemaining = (60 - time.getSeconds()) * 1000; // Starting from 0 seconds 
+  setTimeout(() => {
+
+    intervalId = setTimeout(function tick() {
+      const current = dayjs();
+
+      if (+current >= +dayjs(todo.remindTime)) {
+        clearTimeout(intervalId);
+        todo.reminded = true;
+        let audio = new Audio(
+          new URL(`../assets/audio/popup.wav`, import.meta.url).href);
+        audio.play();
+      } else {
+        intervalId = setTimeout(tick, 30000);
+      }
+    }, 30000);
+  }, secondsRemaining);
+}
+
+// function repeatHander() {
+//   todoList.value.forEach((item: Todo) => {
+//     if (!!item.repeatType && !item.overdue) {
+//       const repeatFunc = () => {
+//         let newTodo = {
+//           ...item,
+//           overdue: false,
+//           overdueTime: undefined,
+//           createTime: undefined,
+//           remindTime: undefined,
+//           reminded: undefined
+//         }
+
+//         item.overdue = true;
+//         item.overdueTime = dayjs().format();
+
+//         addTodo(newTodo);
+//       }
+//       switch (item.repeatType) {
+//         case RepeatType.DAILY:
+//           repeatFunc();
+//           break;
+//         case RepeatType.WEEKDAYS:
+//           const isWeekend = new Date().getDay() % 6 === 0;
+//           !isWeekend && repeatFunc();
+//           break;
+//         case RepeatType.WEEKLY:
+
+//           break;
+//         case RepeatType.MONTHLY:
+
+//           break;
+//         case RepeatType.YEARLY:
+//           break;
+//         default:
+//           break;
+//       }
+//     };
+//   });
+// }
+
 
 function removeTodo(e, v, i) {
   todoList.value.splice(i, 1);
@@ -148,18 +196,119 @@ function isOverdue(date: string | Dayjs) {
   else return ''
 }
 
-function overdueFormat(date: string | Dayjs) {
-  return dayjs(date).locale("en").calendar(null, {
-    sameDay: "[Today]", // The same day ( 2:30 AM, Today )
-    nextDay: "[Tomorrow]", // The next day ( 2:30 AM, Tomorrow )
-    nextWeek: "ddd, MMMM D", // The next week ( 2:30 AM, Mon, October 31 )
-    lastDay: "h:mm A, MMMM D", // The day before ( 2:30 AM, Yesterday )
-    lastWeek: "h:mm A, ddd, MMMM D", // The last week ( 2:30 AM, Mon, XXX 17 )
-    sameElse: "h:mm A, MMMM D, YYYY", // Everything else ( 2:30 AM, Mon 1, 2022 )
-  })
+const getIconUrl = (type) => new URL(`../assets/${type}.svg`, import.meta.url).href;
+
+const repeatTodo = (item: Todo) => {
+  let newTodo = {
+    ...item,
+    overdue: false,
+    overdueTime: undefined,
+    createTime: undefined,
+    remindTime: undefined,
+    reminded: undefined
+  }
+
+  item.overdue = true;
+  item.overdueTime = dayjs().format();
+
+  addTodo(newTodo);
 }
 
-const getIconUrl = (type) => new URL(`../assets/${type}.svg`, import.meta.url).href;
+/**
+ * 
+ * @param param0 interval defaut 1 h
+ * @param func 
+ */
+function timeoutFunc({ time, interval = 1, runNow }: { time: string, interval?: number, runNow?: boolean }, func): NodeJS.Timer {
+  runNow && func();
+
+  let intervalId;
+  let nowTime = new Date().getTime();
+  let timePoints = time.split(':').map(i => parseInt(i)) || ['00'];
+  let recent = new Date().setHours(...(timePoints as [number, ...number[]]));
+
+  recent >= nowTime || (recent += 24 * 3600000);
+
+  setTimeout(() => {
+    func();
+    intervalId = setInterval(func, interval * 3600000);
+  }, recent - nowTime);
+  return intervalId;
+}
+
+// const presence = computed(() => new Set(todoList.value.filter(item => !!item.repeatType).map(o => o.id)));
+
+// const stop = watch(() => presence.value,
+//   (presence, oldPresence) => {
+//     if (presence.size > 0) {
+//       intervalId.value && clearInterval(intervalId.value);
+//       intervalId.value = timeoutFunc({ time: '11:16:40', interval: 0.01 }, () => {
+//         todoList.value.forEach((item: Todo) => {
+//           if (!!item.repeatType && !item.overdue) {
+//             switch (item.repeatType) {
+//               case RepeatType.DAILY:
+//                 repeatTodo(item);
+//                 break;
+//               case RepeatType.WEEKDAYS:
+//                 const isWeekend = new Date().getDay() % 6 === 0;
+//                 !isWeekend && repeatTodo(item);
+//                 break;
+//               case RepeatType.WEEKLY:
+
+//                 break;
+//               case RepeatType.MONTHLY:
+
+//                 break;
+//               case RepeatType.YEARLY:
+//                 break;
+//               default:
+//                 break;
+//             }
+//           };
+//         });
+//       });
+//     }
+//   }, {
+//   immediate: true
+// });
+
+onActivated(() => {
+  const presence = todoList.value.findIndex(item => !!item.repeatType);
+  if (presence >= 0) {
+    intervalId.value && clearInterval(intervalId.value);
+    intervalId.value = timeoutFunc({ time: '00:00:00', interval: 24 }, () => {
+      todoList.value.forEach((item: Todo) => {
+        if (!!item.repeatType && !item.overdue) {
+          switch (item.repeatType) {
+            case RepeatType.DAILY:
+              repeatTodo(item);
+              break;
+            case RepeatType.WEEKDAYS:
+              const isWeekend = new Date().getDay() % 6 === 0;
+              !isWeekend && repeatTodo(item);
+              break;
+            case RepeatType.WEEKLY:
+
+              break;
+            case RepeatType.MONTHLY:
+
+              break;
+            case RepeatType.YEARLY:
+              break;
+            default:
+              break;
+          }
+        };
+      });
+    });
+  }
+})
+
+onDeactivated(() => {
+  clearInterval(intervalId.value);
+  intervalId.value = null;
+})
+
 </script>
 
 <style lang="scss" scoped>
@@ -221,6 +370,8 @@ button {
     color: #a80000;
     // color: var(--font-color-warning);
   }
+
+  .overdue {}
 }
 
 .taskItem-title-wrapper {
