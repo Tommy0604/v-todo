@@ -8,10 +8,18 @@ export default defineConfig({
   },
   build: {
     sourcemap: true,
-    outDir: 'docs',
+    outDir: "docs",
   },
   base: "./",
-  plugins: [vue()],
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => ["lottie-player"].includes(tag),
+        },
+      },
+    }),
+  ],
   css: {
     preprocessorOptions: {
       scss: {

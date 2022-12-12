@@ -120,65 +120,22 @@ function remindHander(todo: Todo) {
   let time = new Date(),
     intervalId,
     secondsRemaining = (60 - time.getSeconds()) * 1000; // Starting from 0 seconds 
+  const func = () => {
+    const current = dayjs();
+    if (+current >= +dayjs(todo.remindTime) && !todo.reminded) {
+      todo.reminded = true;
+      let audio = new Audio(
+        new URL(`../assets/audio/popup.wav`, import.meta.url).href);
+      audio.play();
+      clearInterval(intervalId);
+    }
+  }
+
   setTimeout(() => {
-
-    intervalId = setTimeout(function tick() {
-      const current = dayjs();
-
-      if (+current >= +dayjs(todo.remindTime)) {
-        clearTimeout(intervalId);
-        todo.reminded = true;
-        let audio = new Audio(
-          new URL(`../assets/audio/popup.wav`, import.meta.url).href);
-        audio.play();
-      } else {
-        intervalId = setTimeout(tick, 30000);
-      }
-    }, 30000);
+    func();
+    intervalId = setInterval(func, 30000);
   }, secondsRemaining);
 }
-
-// function repeatHander() {
-//   todoList.value.forEach((item: Todo) => {
-//     if (!!item.repeatType && !item.overdue) {
-//       const repeatFunc = () => {
-//         let newTodo = {
-//           ...item,
-//           overdue: false,
-//           overdueTime: undefined,
-//           createTime: undefined,
-//           remindTime: undefined,
-//           reminded: undefined
-//         }
-
-//         item.overdue = true;
-//         item.overdueTime = dayjs().format();
-
-//         addTodo(newTodo);
-//       }
-//       switch (item.repeatType) {
-//         case RepeatType.DAILY:
-//           repeatFunc();
-//           break;
-//         case RepeatType.WEEKDAYS:
-//           const isWeekend = new Date().getDay() % 6 === 0;
-//           !isWeekend && repeatFunc();
-//           break;
-//         case RepeatType.WEEKLY:
-
-//           break;
-//         case RepeatType.MONTHLY:
-
-//           break;
-//         case RepeatType.YEARLY:
-//           break;
-//         default:
-//           break;
-//       }
-//     };
-//   });
-// }
-
 
 function removeTodo(e, v, i) {
   todoList.value.splice(i, 1);
@@ -235,42 +192,6 @@ function timeoutFunc({ time, interval = 1, runNow }: { time: string, interval?: 
   }, recent - nowTime);
   return intervalId;
 }
-
-// const presence = computed(() => new Set(todoList.value.filter(item => !!item.repeatType).map(o => o.id)));
-
-// const stop = watch(() => presence.value,
-//   (presence, oldPresence) => {
-//     if (presence.size > 0) {
-//       intervalId.value && clearInterval(intervalId.value);
-//       intervalId.value = timeoutFunc({ time: '11:16:40', interval: 0.01 }, () => {
-//         todoList.value.forEach((item: Todo) => {
-//           if (!!item.repeatType && !item.overdue) {
-//             switch (item.repeatType) {
-//               case RepeatType.DAILY:
-//                 repeatTodo(item);
-//                 break;
-//               case RepeatType.WEEKDAYS:
-//                 const isWeekend = new Date().getDay() % 6 === 0;
-//                 !isWeekend && repeatTodo(item);
-//                 break;
-//               case RepeatType.WEEKLY:
-
-//                 break;
-//               case RepeatType.MONTHLY:
-
-//                 break;
-//               case RepeatType.YEARLY:
-//                 break;
-//               default:
-//                 break;
-//             }
-//           };
-//         });
-//       });
-//     }
-//   }, {
-//   immediate: true
-// });
 
 onActivated(() => {
   const presence = todoList.value.findIndex(item => !!item.repeatType);
