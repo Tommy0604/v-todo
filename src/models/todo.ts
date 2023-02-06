@@ -9,6 +9,7 @@ export interface Todo {
   reminded?: boolean;
   repeatType?: string;
   overdue?: boolean;
+  completionTime?: string;
 }
 
 export enum TodoType {

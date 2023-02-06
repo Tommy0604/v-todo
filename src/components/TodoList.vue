@@ -6,7 +6,7 @@
       <div class="taskItem" v-for="(todo, i) in todoList" :key="todo.id">
         <a-dropdown :trigger="['contextmenu']" overlayClassName="task-item">
           <div class="taskItem-ctx">
-            <a-checkbox v-model:checked="todo.done"></a-checkbox>
+            <a-checkbox @change="onDoneChange($event, todo)" :checked="todo.done"></a-checkbox>
             <button class="taskItem-title-wrapper">
               <span :class="{ done: todo.done }"> {{ todo.title }} </span>
               <div class="metaDataInfo">
@@ -19,6 +19,12 @@
                 <span class="metaDataInfo-group" v-if="todo.remindTime">
                   <span class="taskItemInfo-reminder">
                     <icon-font :type="'icon-remind'" :style="{ 'font-size': '1.6rem' }" />
+                    <span class="taskItemInfo-label">{{ calendarPipe(todo.remindTime) }}</span>
+                  </span>
+                </span>
+                <span class="metaDataInfo-group" v-if="todo.completionTime">
+                  <span class="taskItemInfo-date">
+                    <icon-font :type="'icon-sun'" />
                     <span class="taskItemInfo-label">{{ calendarPipe(todo.remindTime) }}</span>
                   </span>
                 </span>
@@ -137,12 +143,10 @@ function remindHander(todo: Todo) {
   }, secondsRemaining);
 }
 
-function removeTodo(e, v, i) {
-  todoList.value.splice(i, 1);
+function removeTodo(e: Event, id: string, idx: number) {
+  todoList.value.splice(idx, 1);
 
-  const index = todos.value.findIndex(
-    (item) => item.type === route.name && item.id === v
-  );
+  const index = todos.value.findIndex(item => item.id === id);
 
   index >= 0 && todos.value.splice(index, 1);
 }
@@ -169,6 +173,12 @@ const repeatTodo = (item: Todo) => {
   item.overdueTime = dayjs().format();
 
   addTodo(newTodo);
+}
+
+const onDoneChange = (e: Event, todo: Todo) => {
+  todo.done = !todo.done;
+  todo.completionTime = dayjs().format();
+  console.log(todo);
 }
 
 /**
@@ -307,6 +317,12 @@ button {
   cursor: pointer;
   text-align: left;
 
+  .done {
+    text-decoration: line-through;
+    color: #797775;
+    // color: var(--font-color-tertiary);
+  }
+
   .metaDataInfo {
     font-size: 1.2rem;
     line-height: 1.6rem;
@@ -317,6 +333,10 @@ button {
 
   .metaDataInfo-group {
     flex-wrap: wrap;
+
+    .anticon {
+      font-size: 1.6rem;
+    }
 
     &::after {
       color: #797775;
