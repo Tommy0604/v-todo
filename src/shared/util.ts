@@ -1,5 +1,5 @@
 import { createFromIconfontCN } from "@ant-design/icons-vue";
-import { PlusOutlined } from "@ant-design/icons-vue";
+import { PlusOutlined, SwapOutlined } from "@ant-design/icons-vue";
 import dayjs, { Dayjs } from "dayjs";
 import calendar from "dayjs/plugin/calendar";
 import isToday from "dayjs/plugin/isToday";
@@ -21,4 +21,4 @@ const range = (start: number, end: number) => {
 
   return result;
 };
-export { IconFont, PlusOutlined, dayjs, Dayjs, range };
+export { IconFont, PlusOutlined, SwapOutlined, dayjs, Dayjs, range };

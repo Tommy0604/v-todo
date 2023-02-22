@@ -13,7 +13,13 @@
         </span>
       </div>
     </div>
-    <div class="toolbar-right">
+    <div class="toolbar-actions">
+      <div class="sortingOptions">
+        <a-button type="link" @click="setSort">
+          <swap-outlined :class="isSort ? 'rotate' : ''" />
+          Sort
+        </a-button>
+      </div>
       <input class="theme-box" type="color" :value="colorState.primaryColor"
         @input="e => onColorChange('primaryColor', e)" />
     </div>
@@ -27,12 +33,14 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { dayjs, IconFont } from "../../shared";
+import { dayjs, IconFont, SwapOutlined } from "../../shared";
 import { computed, ref, reactive, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { TodoType } from "../../models/todo";
 import { ConfigProvider } from "ant-design-vue";
+import { useSort } from "../../services/util.service";
 
+let { isSort, setSort } = useSort();
 let route = useRoute();
 let iconType = ref<string>();
 let todayHint = ref<string | null>();
@@ -138,6 +146,23 @@ const onColorChange = (type: string, e: any) => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+
+  .ant-btn .anticon {
+    transition: all 1s ease-in-out;
+  }
+
+  .anticon {
+    transform: rotate(0.25turn);
+  }
+
+  .rotate {
+    transform: rotate(0.75turn);
+  }
 }
 
 .theme-box {
