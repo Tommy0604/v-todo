@@ -1,5 +1,4 @@
-<template>
-  <!-- <modal :showModal="showModal"></modal> -->
+<template><!-- <modal :showModal="showModal"></modal> -->
   <!-- <button v-if="active < all" @click="clear">清理</button> -->
   <div v-if="todoList.length">
     <transition-group name="flip-list" tag="ul" class="container">
@@ -47,22 +46,24 @@
       speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>
   </div>
 
-  <!-- <div> 全选
+<!-- <div> 全选
       <input type="checkbox" v-model="allDone" />
       <span> {{ active }} / {{ all }} </span>
     </div> -->
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed, onActivated, onDeactivated } from "vue";
+import { ref, watch, watchEffect, computed, onActivated, onDeactivated } from "vue";
 // import modal from "./modal.vue";
 import { RepeatType, Todo, TodoType } from "../models";
 import { useTodos } from "./todoLIst.service";
 import { useRouter, useRoute, onBeforeRouteLeave } from "vue-router";
 import { Dayjs, dayjs, IconFont, } from "../shared";
 import { useDate } from "../services/date.service";
+import { useSort } from "../services/util.service";
 let { todos, clear, showModal, addTodo } = useTodos();
 let { calendarPipe, overduePipe } = useDate();
+let { isSort } = useSort();
 
 let props = defineProps({
   completedList: [],
@@ -99,6 +100,10 @@ watch(
   },
   { immediate: true }
 );
+
+watchEffect(() => {
+  sortTodoList(isSort.value ? 'asc' : 'desc');
+});
 
 function searchTodoList(todoType: string) {
   switch (todoType) {
@@ -149,6 +154,12 @@ function removeTodo(e: Event, id: string, idx: number) {
   const index = todos.value.findIndex(item => item.id === id);
 
   index >= 0 && todos.value.splice(index, 1);
+}
+
+function sortTodoList(sortType: 'asc' | 'desc') {
+  todoList.value = todoList.value.sort((a, b) =>
+    (sortType === 'asc' ? dayjs(a.createTime).isAfter(b.createTime) : dayjs(b.createTime).isAfter(a.createTime)) ? 1 : -1
+  );
 }
 
 function isOverdue(date: string | Dayjs) {
@@ -302,7 +313,6 @@ button {
     // color: var(--font-color-warning);
   }
 
-  .overdue {}
 }
 
 .taskItem-title-wrapper {

@@ -35,7 +35,7 @@ function useTodos() {
       }, 1500);
       return;
     }
-    todos.value.push({
+    todos.value.unshift({
       id: nanoid(),
       title,
       done: false,
