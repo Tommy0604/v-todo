@@ -54,7 +54,7 @@ export default {
 import { IconFont, range } from "../../shared";
 import dayjs, { Dayjs } from "dayjs";
 import { ref } from "vue";
-import { useDate } from "../../services/date.service";
+import { useDate } from "../../hooks/useDate";
 import { Calendar, DateType, RepeatType } from "../../models";
 
 let { datePipe } = useDate();

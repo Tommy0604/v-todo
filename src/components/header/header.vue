@@ -38,7 +38,7 @@ import { computed, ref, reactive, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { TodoType } from "../../models/todo";
 import { ConfigProvider } from "ant-design-vue";
-import { useSort } from "../../services/util.service";
+import { useSort } from "../../hooks/useTool";
 
 let { isSort, setSort } = useSort();
 let route = useRoute();

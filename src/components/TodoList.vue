@@ -1,4 +1,5 @@
-<template><!-- <modal :showModal="showModal"></modal> -->
+<template>
+  <!-- <modal :showModal="showModal"></modal> -->
   <!-- <button v-if="active < all" @click="clear">清理</button> -->
   <div v-if="todoList.length">
     <transition-group name="flip-list" tag="ul" class="container">
@@ -46,21 +47,22 @@
       speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>
   </div>
 
-<!-- <div> 全选
+  <!-- <div> 全选
       <input type="checkbox" v-model="allDone" />
       <span> {{ active }} / {{ all }} </span>
     </div> -->
 </template>
 
 <script setup lang="ts">
-import { ref, watch, watchEffect, computed, onActivated, onDeactivated } from "vue";
+import { ref, watch, watchEffect, computed, onMounted, onUnmounted, onActivated, onDeactivated } from "vue";
 // import modal from "./modal.vue";
 import { RepeatType, Todo, TodoType } from "../models";
-import { useTodos } from "./todoLIst.service";
+import { useTodos } from "../hooks/useTodoList";
 import { useRouter, useRoute, onBeforeRouteLeave } from "vue-router";
 import { Dayjs, dayjs, IconFont, } from "../shared";
-import { useDate } from "../services/date.service";
-import { useSort } from "../services/util.service";
+import { useDate } from "../hooks/useDate";
+import { useSort } from "../hooks/useTool";
+import { start } from "repl";
 let { todos, clear, showModal, addTodo } = useTodos();
 let { calendarPipe, overduePipe } = useDate();
 let { isSort } = useSort();
@@ -86,7 +88,6 @@ let allDone = computed({
     });
   },
 });
-let intervalId = ref();
 
 watch(
   [route, todos.value, todos],
@@ -189,66 +190,36 @@ const repeatTodo = (item: Todo) => {
 const onDoneChange = (e: Event, todo: Todo) => {
   todo.done = !todo.done;
   todo.completionTime = dayjs().format();
-  console.log(todo);
 }
 
-/**
- * 
- * @param param0 interval defaut 1 h
- * @param func 
- */
-function timeoutFunc({ time, interval = 1, runNow }: { time: string, interval?: number, runNow?: boolean }, func): NodeJS.Timer {
-  runNow && func();
-
-  let intervalId;
-  let nowTime = new Date().getTime();
-  let timePoints = time.split(':').map(i => parseInt(i)) || ['00'];
-  let recent = new Date().setHours(...(timePoints as [number, ...number[]]));
-
-  recent >= nowTime || (recent += 24 * 3600000);
-
-  setTimeout(() => {
-    func();
-    intervalId = setInterval(func, interval * 3600000);
-  }, recent - nowTime);
-  return intervalId;
-}
-
-onActivated(() => {
-  const presence = todoList.value.findIndex(item => !!item.repeatType);
-  if (presence >= 0) {
-    intervalId.value && clearInterval(intervalId.value);
-    intervalId.value = timeoutFunc({ time: '00:00:00', interval: 24 }, () => {
-      todoList.value.forEach((item: Todo) => {
-        if (!!item.repeatType && !item.overdue) {
-          switch (item.repeatType) {
-            case RepeatType.DAILY:
-              repeatTodo(item);
-              break;
-            case RepeatType.WEEKDAYS:
-              const isWeekend = new Date().getDay() % 6 === 0;
-              !isWeekend && repeatTodo(item);
-              break;
-            case RepeatType.WEEKLY:
-
-              break;
-            case RepeatType.MONTHLY:
-
-              break;
-            case RepeatType.YEARLY:
-              break;
-            default:
-              break;
-          }
-        };
+function checkRepeatTask() {
+  const repeat = todoList.value.findIndex(item => !!item.repeatType);
+  if (repeat >= 0 && typeof Worker !== 'undefined') {
+    const worker = new Worker(
+      new URL('../workers/worker.js', import.meta.url),
+      { type: 'module' }
+    );
+    const todos = {
+      type: 'start',
+      todoList: JSON.parse(JSON.stringify(todoList.value))
+    };
+    worker.postMessage(todos);
+    worker.addEventListener('message', e => {
+      repeatTodo(e.data);
+    })
+    
+    onUnmounted(() => {
+      worker.postMessage({
+        type: 'stop'
       });
     });
   }
-})
+}
 
-onDeactivated(() => {
-  clearInterval(intervalId.value);
-  intervalId.value = null;
+watch(todoList, () => checkRepeatTask)
+
+onMounted(() => {
+  checkRepeatTask();
 })
 
 </script>

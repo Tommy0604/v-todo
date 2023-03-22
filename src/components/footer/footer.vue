@@ -42,8 +42,8 @@ export default {
 <script setup lang="ts">
 import { defineComponent, ref, onMounted, watch, computed, ComputedRef } from "vue";
 import { useRouter, useRoute, onBeforeRouteUpdate } from "vue-router";
-import { useTodos } from "../todoLIst.service";
-import { useDate } from "../../services/date.service";
+import { useTodos } from "../../hooks/useTodoList";
+import { useDate } from "../../hooks/useDate";
 import { Calendar, DateType, Remind, Repeat, RepeatType, TodoType } from "../../models";
 import { IconFont, PlusOutlined, dayjs, Dayjs } from "../../shared";
 import DropdownCalendar from "../dropdown/dropdown.vue";
