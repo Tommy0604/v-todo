@@ -1,0 +1,21 @@
+{
+  "my_day": "我的一天",
+  "planned": "计划内",
+  "completed": "已完成",
+  "all": "全部",
+  "add_task": "添加任务",
+  "calendar": {
+    "today": "今天",
+    "tomorrow": "明天",
+    "next_week": "每周",
+    "later_today": "今天",
+    "pick_date": "选择日期",
+    "other_time": "其他时间",
+    "daily": "每日",
+    "weekdays": "平日",
+    "weekly": "每周",
+    "monthly":"每月",
+    "yearly":"每年"
+  }
+}
+

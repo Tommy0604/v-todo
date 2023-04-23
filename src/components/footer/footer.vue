@@ -3,7 +3,7 @@
     <div class="plus">
       <plus-outlined @click="addTodoItem" />
     </div>
-    <a-input v-model:value="title" :bordered="false" placeholder="Add a task" @keydown.enter="addTodoItem"
+    <a-input v-model:value="title" :bordered="false" :placeholder=" $t('add_task') " @keydown.enter="addTodoItem"
       @change="inputChange" />
     <div class="tools" v-if="ishowTool" :class="ishowTool ? 'enter-action' : 'leave-active'">
       <div class="tool-calendar">
@@ -71,17 +71,17 @@ let pickDateText = ref<string>(),
 let calendarList: Calendar[] = [{
   key: DateType.TODAY,
   icon: 'today',
-  text: 'Today',
+  text: 'today',
   secondaryText: 'Tue'
 }, {
   key: DateType.TOMORROW,
   icon: 'tomorrow',
-  text: 'Tomorrow',
+  text: 'tomorrow',
   secondaryText: 'Web'
 }, {
   key: DateType.NEXT_WEEK,
   icon: 'next-week',
-  text: 'Next week',
+  text: 'next_week',
   secondaryText: 'Mon'
 }];
 
@@ -157,17 +157,17 @@ function getRemindText() {
     return [{
       key: DateType.LATER_TODAY,
       icon: 'later-today',
-      text: 'Later ToDay',
+      text: 'later_today',
       secondaryText: dayjs().add(dayjs().minute() >= 30 ? 4 : 3, 'h').locale("en").format("h:00 A"),
     }, {
       key: DateType.TOMORROW,
       icon: 'later-tomorrow',
-      text: 'Tomorrow',
+      text: 'tomorrow',
       secondaryText: dayjs().add(1, 'day').locale("en").format('ddd, 9 ') + 'AM'
     }, {
       key: DateType.NEXT_WEEK,
       icon: 'later-next-week',
-      text: 'Next week',
+      text: 'next_week',
       secondaryText: 'Mon, 9 AM'
     }]
   });

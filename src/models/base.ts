@@ -1,16 +1,16 @@
 export enum DateType {
   TODAY = "today",
   TOMORROW = "tomorrow",
-  NEXT_WEEK = "next week",
-  OTHER_TIME = 'other time',
-  LATER_TODAY = "later today",
+  NEXT_WEEK = "next_week",
+  OTHER_TIME = 'other_time',
+  LATER_TODAY = "later_today",
 }
 
 export enum RepeatType {
-  DAILY = 'Daily',
-  WEEKDAYS = 'Weekdays',
-  WEEKLY = 'Weekly',
-  MONTHLY = 'Monthly',
-  YEARLY = 'Yearly',
+  DAILY = 'daily',
+  WEEKDAYS = 'weekdays',
+  WEEKLY = 'weekly',
+  MONTHLY = 'monthly',
+  YEARLY = 'yearly',
   // CUSTOM = 'Custom' TODO
 }

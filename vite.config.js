@@ -33,4 +33,9 @@ export default defineConfig({
       },
     },
   },
+  define: {
+    __VUE_I18N_FULL_INSTALL__: true,
+    __VUE_I18N_LEGACY_API__: false, // off Option api to avoid i18n console warnings
+    __INTLIFY_PROD_DEVTOOLS__: false,
+  },
 });

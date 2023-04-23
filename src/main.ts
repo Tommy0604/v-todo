@@ -1,12 +1,14 @@
 import { createApp } from "vue";
-import App from "./App.vue";
 import router from "./router/index";
-
+import App from "./App.vue";
 
 /* import the ant-design-vue */
 import Antd from "ant-design-vue";
 import 'ant-design-vue/dist/antd.variable.min.css';
 import "./styles/global.scss";
+
+// import i18n
+import { i18n } from "./i18n";
 
 const app = createApp(App);
 app.config.globalProperties.$AILEMENTE = { size: "large" };
@@ -14,4 +16,5 @@ app.config.globalProperties.$AILEMENTE = { size: "large" };
 app
   .use(router)
   .use(Antd)
+  .use(i18n)
   .mount("#app");

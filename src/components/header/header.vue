@@ -4,7 +4,7 @@
       <div class="toolbar-title">
         <h2 class="listTitle">
           <icon-font v-if="iconType" :type="iconType" class="listTitle-icon" />
-          <span>{{ title }}</span>
+          <span>{{ $t(title) }}</span>
         </h2>
       </div>
       <div class="toolbar-subline" v-if="todayHint">
@@ -14,6 +14,7 @@
       </div>
     </div>
     <div class="toolbar-actions">
+      <a-switch v-model:checked="checked" />
       <div class="sortingOptions">
         <a-button type="link" @click="setSort">
           <swap-outlined :class="isSort ? 'rotate' : ''" />
@@ -34,11 +35,13 @@ export default {
 
 <script setup lang="ts">
 import { dayjs, IconFont, SwapOutlined } from "../../shared";
-import { computed, ref, reactive, onMounted } from "vue";
+import { computed, ref, reactive, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import { TodoType } from "../../models/todo";
 import { ConfigProvider } from "ant-design-vue";
 import { useSort } from "../../hooks/useTool";
+import { setLocale } from "../../hooks/useLocale";
+import { LANG_VALUE } from "../../i18n";
 
 let { isSort, setSort } = useSort();
 let route = useRoute();
@@ -49,21 +52,20 @@ let title = computed(() => {
     case TodoType.MYDAY:
       iconType.value = 'icon-sun';
       todayHint.value = dayjs().locale('en').format('dddd, MMMM D');
-      return "我的一天";
+      return "my_day";
     case TodoType.PLANS:
       iconType.value = 'icon-calendar';
       todayHint.value = null;
-      return "计划内";
+      return "planned";
     case TodoType.COMPLETED:
       iconType.value = 'icon-completed';
       todayHint.value = null;
-      return "已完成";
+      return "completed";
     case TodoType.ALL:
       iconType.value = 'icon-all';
       todayHint.value = null;
-      return "全部";
-    default:
-      return "我的一天";
+      return "all";
+    default: return "my_day";
   }
 });
 
@@ -74,6 +76,12 @@ const colorState = reactive({
   successColor: '#52c41a',
   infoColor: '#1890ff',
 });
+
+const checked = ref<boolean>(true);
+
+watch(checked , (_val,oldVal) => {
+  setLocale(checked.value ? LANG_VALUE.Zh: LANG_VALUE.En)
+})
 
 onMounted(() => {
   ConfigProvider.config({
@@ -116,6 +124,9 @@ const onColorChange = (type: string, e: any) => {
 }
 
 .listTitle {
+  line-height: 28px;
+  margin: 0;
+  padding: 6px 8px;
   color: #323130;
   // color: var(--font-color-primary);
   white-space: nowrap;
@@ -123,8 +134,6 @@ const onColorChange = (type: string, e: any) => {
   text-overflow: ellipsis;
   font-size: 2rem;
   font-weight: 600;
-  margin: 0;
-  padding: 6px 8px;
 }
 
 .listTitle-icon {

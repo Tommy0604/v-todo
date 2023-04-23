@@ -6,9 +6,9 @@
         <a-menu-item v-for="item in calendarList" :key="item.key" @mousedown="(e) => e.preventDefault()">
           <div class="dropdown-item">
             <img :src="getIconUrl(item.icon)" alt="" />
-            <span class="dropdown-item-Text">{{ item.text }}</span>
+            <span class="dropdown-item-Text">{{ $t(`calendar.${item.text}`) }}</span>
             <span class="dropdown-item-secondaryText">
-              {{ item.secondaryText }}
+              {{ item.secondaryText || '' }}
             </span>
           </div>
         </a-menu-item>
@@ -19,7 +19,7 @@
               <img :src="getIconUrl('pick-date')" alt="" />
             </template>
             <template #title>
-              Pick a date
+              {{ $t('calendar.pick_date') }}
             </template>
             <a-menu-item :key="DateType.OTHER_TIME" @mouseenter="duePickerOpen = true"
               @mouseleave="duePickerOpen = false">

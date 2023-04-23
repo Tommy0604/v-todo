@@ -14,25 +14,25 @@
           <template #icon>
             <icon-font type="icon-sun" :style="{ 'font-size': '2rem' }" />
           </template>
-          <router-link to="/myday">我的一天</router-link>
+          <router-link to="/myday">{{ $t('my_day') }}</router-link>
         </a-menu-item>
         <a-menu-item key="/plans">
           <template #icon>
             <icon-font type="icon-calendar" :style="{ 'font-size': '2rem' }" />
           </template>
-          <router-link to="/plans">计划内</router-link>
+          <router-link to="/plans">{{ $t('planned') }}</router-link>
         </a-menu-item>
         <a-menu-item key="/completed">
           <template #icon>
             <icon-font type="icon-completed" :style="{ 'font-size': '2rem' }" />
           </template>
-          <router-link to="/completed">已完成</router-link>
+          <router-link to="/completed">{{ $t('completed') }}</router-link>
         </a-menu-item>
         <a-menu-item key="/all">
           <template #icon>
             <icon-font type="icon-all" :style="{ 'font-size': '2rem' }" />
           </template>
-          <router-link to="/all">全部</router-link>
+          <router-link to="/all">{{ $t('all') }}</router-link>
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
