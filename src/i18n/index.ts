@@ -16,9 +16,10 @@ const i18n = createI18n({
   }
 })
 
-export function getLanguage() {
-  const chooseLanguage = localStorage.getItem('Language')
-  if (chooseLanguage) return chooseLanguage
+function getLanguage() {
+  if (typeof window === 'undefined') return;
+  const chooseLanguage = localStorage.getItem('Language');
+  if (chooseLanguage) return chooseLanguage;
 
   const language = navigator.language.toLowerCase()
   const locales = [LANG_VALUE.En, LANG_VALUE.Zh]
@@ -27,10 +28,11 @@ export function getLanguage() {
       return locale
     }
   }
-  localStorage.setItem('Language',LANG_VALUE.En);
   return LANG_VALUE.En
 }
+
 export {
   i18n,
-  LANG_VALUE
+  LANG_VALUE,
+  getLanguage
 }

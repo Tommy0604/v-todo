@@ -26,16 +26,24 @@
 </template>
 
 <script lang="ts" setup>
+import { watch } from "vue";
 import LeftMenu from "./components/menu/menu.vue";
 import TodoHeader from "./components/header/header.vue";
 import TodoFooter from "./components/footer/footer.vue";
 
-import zhCN from "ant-design-vue/es/locale/zh_CN";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
-dayjs.locale("zh-cn");
+dayjs.locale('zh-cn');
 
-const locale = zhCN;
+import { storeToRefs } from "pinia";
+import { useI18nStore } from "./hooks/useStores";
+
+const i18nStore = useI18nStore();
+const { locale, language } = storeToRefs(i18nStore);
+
+watch(language, (val) => {
+  dayjs.locale(val);
+});
 </script>
 
 <style lang="scss">
@@ -67,5 +75,4 @@ const locale = zhCN;
 .todo-content {
   margin: 0 24px;
 }
-
 </style>

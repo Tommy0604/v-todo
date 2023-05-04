@@ -14,15 +14,23 @@
       </div>
     </div>
     <div class="toolbar-actions">
-      <a-switch v-model:checked="checked" />
+      <div class="language">
+        <a-button type="text" @click="checked = !checked">
+          {{ checked ? "zh-cn" : "en" }}
+        </a-button>
+      </div>
       <div class="sortingOptions">
         <a-button type="link" @click="setSort">
           <swap-outlined :class="isSort ? 'rotate' : ''" />
           Sort
         </a-button>
       </div>
-      <input class="theme-box" type="color" :value="colorState.primaryColor"
-        @input="e => onColorChange('primaryColor', e)" />
+      <input
+        class="theme-box"
+        type="color"
+        :value="colorState.primaryColor"
+        @input="(e) => onColorChange('primaryColor', e)"
+      />
     </div>
   </div>
 </template>
@@ -35,12 +43,12 @@ export default {
 
 <script setup lang="ts">
 import { dayjs, IconFont, SwapOutlined } from "../../shared";
-import { computed, ref, reactive, onMounted, watch } from "vue";
+import { computed, ref, reactive, onMounted, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { TodoType } from "../../models/todo";
 import { ConfigProvider } from "ant-design-vue";
 import { useSort } from "../../hooks/useTool";
-import { setLocale } from "../../hooks/useLocale";
+import { i18nDayjs, setLocale } from "../../hooks/useLocale";
 import { LANG_VALUE } from "../../i18n";
 
 let { isSort, setSort } = useSort();
@@ -50,44 +58,45 @@ let todayHint = ref<string | null>();
 let title = computed(() => {
   switch (route.name) {
     case TodoType.MYDAY:
-      iconType.value = 'icon-sun';
-      todayHint.value = dayjs().locale('en').format('dddd, MMMM D');
+      iconType.value = "icon-sun";
+      todayHint.value = i18nDayjs().format("dddd, MMMM D");
       return "my_day";
     case TodoType.PLANS:
-      iconType.value = 'icon-calendar';
+      iconType.value = "icon-calendar";
       todayHint.value = null;
       return "planned";
     case TodoType.COMPLETED:
-      iconType.value = 'icon-completed';
+      iconType.value = "icon-completed";
       todayHint.value = null;
       return "completed";
     case TodoType.ALL:
-      iconType.value = 'icon-all';
+      iconType.value = "icon-all";
       todayHint.value = null;
       return "all";
-    default: return "my_day";
+    default:
+      return "my_day";
   }
 });
 
 const colorState = reactive({
-  primaryColor: '#42b883',
-  errorColor: '#ff4d4f',
-  warningColor: '#faad14',
-  successColor: '#52c41a',
-  infoColor: '#1890ff',
+  primaryColor: "#42b883",
+  errorColor: "#ff4d4f",
+  warningColor: "#faad14",
+  successColor: "#52c41a",
+  infoColor: "#1890ff",
 });
 
 const checked = ref<boolean>(true);
 
-watch(checked , (_val,oldVal) => {
-  setLocale(checked.value ? LANG_VALUE.Zh: LANG_VALUE.En)
-})
+watchEffect(() => {
+  setLocale(checked.value ? LANG_VALUE.Zh : LANG_VALUE.En);
+});
 
 onMounted(() => {
   ConfigProvider.config({
     theme: colorState,
   });
-})
+});
 
 const onColorChange = (type: string, e: any) => {
   Object.assign(colorState, { [type]: e.target.value });
@@ -95,7 +104,6 @@ const onColorChange = (type: string, e: any) => {
     theme: colorState,
   });
 };
-
 </script>
 
 <style lang="scss">
@@ -124,7 +132,8 @@ const onColorChange = (type: string, e: any) => {
 }
 
 .listTitle {
-  line-height: 28px;
+  display: flex;
+  align-items: center;
   margin: 0;
   padding: 6px 8px;
   color: #323130;
@@ -162,7 +171,14 @@ const onColorChange = (type: string, e: any) => {
   align-items: center;
 
   .ant-btn .anticon {
-    transition: all 1s ease-in-out;
+    transition: transform 1s ease-in-out;
+  }
+
+  .language > .ant-btn {
+    width: 42px;
+    padding: 0;
+    margin: 0;
+    color: var(--ant-primary-color);
   }
 
   .anticon {
@@ -189,7 +205,8 @@ const onColorChange = (type: string, e: any) => {
 }
 
 .theme-box::-webkit-color-swatch-wrapper {
-  box-shadow: -8px -8px 10px rgba(255, 255, 255, 1), 8px 8px 25px rgb(0, 0, 0, 15%);
+  box-shadow: -8px -8px 10px rgba(255, 255, 255, 1),
+    8px 8px 25px rgb(0, 0, 0, 15%);
   border: 8px solid #faf9f8;
   border-radius: 50%;
 }

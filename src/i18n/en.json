@@ -5,6 +5,8 @@
   "all": "All",
   "add_task": "Add a task",
   "calendar": {
+    "am": "AM",
+    "pm": "PM",
     "today": "ToDay",
     "tomorrow": "Tomorrow",
     "next_week": "Next week",

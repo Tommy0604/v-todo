@@ -1,5 +1,8 @@
 import dayjs, { Dayjs } from "dayjs";
 import { DateType } from "../models/base";
+import { i18nDayjs } from "./useLocale";
+import { i18n } from "../i18n";
+const { t } = i18n.global;
 
 function useDate() {
   function datePipe(dateType: DateType): Dayjs {
@@ -27,9 +30,9 @@ function useDate() {
   function calendarPipe(
     date?: string | number | dayjs.Dayjs | Date | null | undefined
   ): string {
-    return dayjs(date).locale("en").calendar(null, {
-      sameDay: "h:mm A, [Today] ", // The same day ( 2:30 AM, Today )
-      nextDay: "h:mm A, [Tomorrow] ", // The next day ( 2:30 AM, Tomorrow )
+    return i18nDayjs(date).calendar(null, {
+      sameDay: `h:mm A, [${t('calendar.today')}] `, // The same day ( 2:30 AM, Today )
+      nextDay: `h:mm A, [${t('calendar.tomorrow')}]`, // The next day ( 2:30 AM, Tomorrow )
       nextWeek: "h:mm A, ddd, MMMM D", // The next week ( 2:30 AM, Mon, October 31 )
       lastDay: "h:mm A, MMMM D", // The day before ( 2:30 AM, Yesterday )
       lastWeek: "h:mm A, ddd, MMMM D", // The last week ( 2:30 AM, Mon, XXX 17 )
@@ -38,9 +41,9 @@ function useDate() {
   }
 
   function overduePipe(date: string | Dayjs) {
-    return dayjs(date).locale("en").calendar(null, {
-      sameDay: "[Today]",
-      nextDay: "[Tomorrow]",
+    return i18nDayjs(date).calendar(null, {
+      sameDay: `[${t('calendar.today')}]`,
+      nextDay: `[${t('calendar.tomorrow')}]`,
       nextWeek: "ddd, MMMM D",
       lastDay: "h:mm A, MMMM D",
       lastWeek: "h:mm A, ddd, MMMM D",
