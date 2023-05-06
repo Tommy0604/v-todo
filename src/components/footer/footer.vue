@@ -7,7 +7,9 @@
       v-model:value="title"
       :bordered="false"
       :placeholder="$t('add_task')"
-      @keydown.enter="addTodoItem"
+      @keydown.enter="addTodoItem()"
+      @compositionstart="lock = false"
+      @compositionend="lock = true"
       @change="inputChange"
     />
     <div
@@ -38,7 +40,9 @@
           :showCustomItem="true"
         />
         <div class="due-date-text">
-          <span class="date"> {{ remindText && calendarPipe(remindText) }} </span>
+          <span class="date">
+            {{ remindText && calendarPipe(remindText) }}
+          </span>
         </div>
       </div>
       <!-- TODO custom-->
@@ -92,7 +96,8 @@ let ishow = ref<boolean>(false), // comp switch
   ishowTool = ref<boolean>(false), // tools switch
   anyPickerOpen = ref<boolean>(false); // due comp switch
 
-let title = ref("");
+let title = ref(""),
+  lock = ref(true);
 let dropdownRef = ref();
 let overdueTime = ref<Dayjs>(),
   remindTime = ref<Dayjs>();
@@ -145,6 +150,8 @@ watch(
 );
 
 const addTodoItem = () => {
+  if (!lock.value) return;
+
   let newTodo = {
     title: title.value,
     type: todoType.value,
