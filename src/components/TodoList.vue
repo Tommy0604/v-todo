@@ -131,7 +131,7 @@ function searchTodoList(todoType: string) {
 function remindHander(todo: Todo) {
   let time = new Date(),
     intervalId,
-    secondsRemaining = (60 - time.getSeconds()) * 1000; // Starting from 0 seconds 
+    secondsRemaining = (60 - time.getSeconds()) * 1000; // Starting from 0 seconds
   const func = () => {
     const current = dayjs();
     if (+current >= +dayjs(todo.remindTime) && !todo.reminded) {
@@ -169,8 +169,6 @@ function isOverdue(date: string | Dayjs) {
   else return ''
 }
 
-const getIconUrl = (type) => new URL(`../assets/${type}.svg`, import.meta.url).href;
-
 const repeatTodo = (item: Todo) => {
   let newTodo = {
     ...item,
@@ -189,7 +187,7 @@ const repeatTodo = (item: Todo) => {
 
 const onDoneChange = (e: Event, todo: Todo) => {
   todo.done = !todo.done;
-  todo.completionTime = dayjs().format();
+  todo.completionTime = todo.done ? dayjs().format() : "";
 }
 
 function checkRepeatTask() {
@@ -207,7 +205,7 @@ function checkRepeatTask() {
     worker.addEventListener('message', e => {
       repeatTodo(e.data);
     })
-    
+
     onUnmounted(() => {
       worker.postMessage({
         type: 'stop'
