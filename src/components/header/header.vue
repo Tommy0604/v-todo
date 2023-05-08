@@ -15,15 +15,19 @@
     </div>
     <div class="toolbar-actions">
       <div class="language">
-        <a-button type="text" @click="checked = !checked">
-          {{ checked ? "zh-cn" : "en" }}
-        </a-button>
+        <tooltips :title="$t('header.i18n')" :color="'block'">
+          <a-button type="text" @click="checked = !checked">
+            {{ checked ? "zh-cn" : "en" }}
+          </a-button>
+        </tooltips>
       </div>
       <div class="sortingOptions">
-        <a-button type="link" @click="setSort">
-          <swap-outlined :class="isSort ? 'rotate' : ''" />
-          Sort
-        </a-button>
+        <tooltips :title="isSort ? $t('header.des', 0) : $t('header.asc', 0)">
+          <a-button type="link" @click="setSort">
+            <swap-outlined :class="isSort ? 'rotate' : ''" />
+            {{ isSort ? $t("header.asc", 1) : $t("header.des", 1) }}
+          </a-button>
+        </tooltips>
       </div>
       <input
         class="theme-box"
@@ -50,6 +54,7 @@ import { ConfigProvider } from "ant-design-vue";
 import { useSort } from "../../hooks/useTool";
 import { i18nDayjs, setLocale } from "../../hooks/useLocale";
 import { LANG_VALUE } from "../../i18n";
+import tooltips from "../tooltips/tooltips.vue";
 
 let { isSort, setSort } = useSort();
 let route = useRoute();
@@ -106,7 +111,7 @@ const onColorChange = (type: string, e: any) => {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .toolbar-top {
   display: flex;
   flex-direction: row;

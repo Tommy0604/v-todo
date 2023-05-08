@@ -286,7 +286,6 @@ button {
 
 .taskItem-title-wrapper {
   font-size: 1.4rem;
-  color: #323130;
   position: relative;
   flex: 1 1 0px;
   min-height: 52px;

@@ -18,6 +18,16 @@
     "weekly": "每周",
     "monthly":"每月",
     "yearly":"每年"
+  },
+  "header": {
+    "i18n": "单击切换中英文",
+    "asc": "升序 | 切换升序",
+    "des": "降序 | 切换降序"
+  },
+  "footer": {
+    "calendar": "添加截止日期",
+    "remind": "提醒时间",
+    "repeat": "重复"
   }
 }
 

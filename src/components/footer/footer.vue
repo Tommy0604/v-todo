@@ -18,13 +18,15 @@
       :class="ishowTool ? 'enter-action' : 'leave-active'"
     >
       <div class="tool-calendar">
-        <DropdownCalendar
-          ref="dropdownRef"
-          :iconName="'icon-calendar'"
-          :calendarList="calendarList"
-          @clickMenu="clickDue"
-          :showCustomItem="true"
-        />
+        <tooltips :title="$t('footer.calendar')" :isDefault="false">
+          <DropdownCalendar
+            ref="dropdownRef"
+            :iconName="'icon-calendar'"
+            :calendarList="calendarList"
+            @clickMenu="clickDue"
+            :showCustomItem="true"
+          />
+        </tooltips>
         <div class="due-date-text">
           <span class="date">
             {{ pickDateText && t(`calendar.${pickDateText}`) }}
@@ -32,13 +34,15 @@
         </div>
       </div>
       <div class="tool-remind">
-        <DropdownCalendar
-          :iconName="'icon-remind'"
-          :calendarList="remindList"
-          @clickMenu="clickRemind"
-          :showTimePick="true"
-          :showCustomItem="true"
-        />
+        <tooltips :title="$t('footer.remind')" :isDefault="false">
+          <DropdownCalendar
+            :iconName="'icon-remind'"
+            :calendarList="remindList"
+            @clickMenu="clickRemind"
+            :showTimePick="true"
+            :showCustomItem="true"
+          />
+        </tooltips>
         <div class="due-date-text">
           <span class="date">
             {{ remindText && calendarPipe(remindText) }}
@@ -47,11 +51,13 @@
       </div>
       <!-- TODO custom-->
       <div class="tool-repeat">
-        <DropdownCalendar
-          :iconName="'icon-repeat'"
-          :calendarList="repeadList"
-          @clickMenu="clickRepeat"
-        />
+        <tooltips :title="$t('footer.repeat')" :isDefault="false">
+          <DropdownCalendar
+            :iconName="'icon-repeat'"
+            :calendarList="repeadList"
+            @clickMenu="clickRepeat"
+          />
+        </tooltips>
         <div class="due-date-text">
           <span class="date">
             {{ repeatText && t(`calendar.${repeatText}`) }}
@@ -70,8 +76,6 @@ export default {
 <script setup lang="ts">
 import { ref, watch, computed, ComputedRef } from "vue";
 import { useRouter, useRoute, onBeforeRouteUpdate } from "vue-router";
-import { useTodos } from "../../hooks/useTodoList";
-import { useDate } from "../../hooks/useDate";
 import {
   Calendar,
   DateType,
@@ -81,9 +85,12 @@ import {
   TodoType,
 } from "../../models";
 import { PlusOutlined, dayjs, Dayjs } from "../../shared";
-import DropdownCalendar from "../dropdown/dropdown.vue";
 import { useI18n } from "vue-i18n";
+import { useTodos } from "../../hooks/useTodoList";
+import { useDate } from "../../hooks/useDate";
 import { i18nDayjs } from "../../hooks/useLocale";
+import DropdownCalendar from "../dropdown/dropdown.vue";
+import tooltips from "../tooltips/tooltips.vue";
 
 let { todos, addTodo, clear, showModal } = useTodos();
 let { datePipe, calendarPipe } = useDate();
@@ -264,7 +271,6 @@ function clickRemind(type: string, date?: Dayjs): void {
 function clickRepeat(type: string): void {
   repeatText.value = repeatType.value = type;
 }
-
 </script>
 
 <style lang="scss" scoped>

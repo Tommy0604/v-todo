@@ -18,5 +18,15 @@
     "weekly": "Weekly",
     "monthly":"Monthly",
     "yearly":"Yearly"
+  },
+  "header": {
+    "i18n": "Click to switch between English and Chinese",
+    "asc": "Asc | Switch to ascending order",
+    "des": "Des | Switch to descending order"
+  },
+  "footer": {
+    "calendar": "Add due date",
+    "remind": "Remind me",
+    "repeat": "Repeat"
   }
 }
