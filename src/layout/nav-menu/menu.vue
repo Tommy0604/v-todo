@@ -8,7 +8,6 @@
         :openKeys="state.openKeys"
         :selectedKeys="[$route.path]"
         mode="inline"
-        @click="handleClick"
       >
         <a-menu-item key="/myday">
           <template #icon>
@@ -63,9 +62,6 @@ const state = reactive({
   preOpenKeys: [],
 });
 
-const handleClick = (e) => {
-  // console.log("click ================> ", e);
-};
 const toggleCollapsed = () => {
   collapsed.value = !collapsed.value;
   state.openKeys = collapsed.value ? [] : state.preOpenKeys;

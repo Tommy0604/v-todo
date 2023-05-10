@@ -13,19 +13,25 @@
                 <span class="metaDataInfo-group" v-if="todo.overdueTime">
                   <span class="taskItemInfo-date" :class="isOverdue(todo.overdueTime)">
                     <icon-font :type="'icon-calendar'" :style="{ 'font-size': '1.6rem' }" />
-                    <span class="taskItemInfo-label">{{ overduePipe(todo.overdueTime) }}</span>
+                    <span class="taskItemInfo-label">{{
+                      overduePipe(todo.overdueTime)
+                    }}</span>
                   </span>
                 </span>
                 <span class="metaDataInfo-group" v-if="todo.remindTime">
                   <span class="taskItemInfo-reminder">
                     <icon-font :type="'icon-remind'" :style="{ 'font-size': '1.6rem' }" />
-                    <span class="taskItemInfo-label">{{ calendarPipe(todo.remindTime) }}</span>
+                    <span class="taskItemInfo-label">{{
+                      calendarPipe(todo.remindTime)
+                    }}</span>
                   </span>
                 </span>
                 <span class="metaDataInfo-group" v-if="todo.completionTime">
                   <span class="taskItemInfo-date">
                     <icon-font :type="'icon-sun'" />
-                    <span class="taskItemInfo-label">{{ calendarPipe(todo.remindTime) }}</span>
+                    <span class="taskItemInfo-label">{{
+                      calendarPipe(todo.remindTime)
+                    }}</span>
                   </span>
                 </span>
               </div>
@@ -42,9 +48,10 @@
       </div>
     </transition-group>
   </div>
+
   <div class="flex-center" v-else>
     <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_iikbn1ww.json" background="rgba(0, 0, 0, 0)"
-      speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>
+      speed="1" style="width: 300px; height: 300px" loop autoplay></lottie-player>
   </div>
 
   <!-- <div> 全选
@@ -54,21 +61,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, watchEffect, computed, onMounted, onUnmounted, onActivated, onDeactivated } from "vue";
+import {
+  ref,
+  watch,
+  watchEffect,
+  computed,
+  onMounted,
+  onUnmounted,
+  onActivated,
+  onDeactivated,
+} from "vue";
 // import modal from "./modal.vue";
 import { RepeatType, Todo, TodoType } from "../models";
 import { useTodos } from "../hooks/useTodoList";
 import { useRouter, useRoute, onBeforeRouteLeave } from "vue-router";
-import { Dayjs, dayjs, IconFont, } from "../shared";
+import { Dayjs, dayjs, IconFont } from "../shared";
 import { useDate } from "../hooks/useDate";
-import { useSort } from "../hooks/useTool";
-import { start } from "repl";
 let { todos, clear, showModal, addTodo } = useTodos();
 let { calendarPipe, overduePipe } = useDate();
-let { isSort } = useSort();
 
 let props = defineProps({
-  completedList: [],
+  isSort: Boolean
 });
 
 let todoList = ref<Todo[]>([]);
@@ -95,16 +108,16 @@ watch(
     const newRouterName = newRouter?.name?.toString(),
       oldRouterName = oldRouter?.name?.toString();
     newRouterName && searchTodoList(newRouterName);
-    // if (newRouterName !== oldRouterName) {
-    //   todoList.value.forEach((item: Todo) => (item.done = false));
-    // }
   },
   { immediate: true }
 );
 
-watchEffect(() => {
-  sortTodoList(isSort.value ? 'asc' : 'desc');
-});
+
+watch(
+  () => props.isSort,
+  (_val, oldVal) => sortTodoList(_val ? "asc" : "desc"),
+  { immediate: true }
+);
 
 function searchTodoList(todoType: string) {
   switch (todoType) {
@@ -137,11 +150,12 @@ function remindHander(todo: Todo) {
     if (+current >= +dayjs(todo.remindTime) && !todo.reminded) {
       todo.reminded = true;
       let audio = new Audio(
-        new URL(`../assets/audio/popup.wav`, import.meta.url).href);
+        new URL(`../assets/audio/popup.wav`, import.meta.url).href
+      );
       audio.play();
       clearInterval(intervalId);
     }
-  }
+  };
 
   setTimeout(() => {
     func();
@@ -152,21 +166,27 @@ function remindHander(todo: Todo) {
 function removeTodo(e: Event, id: string, idx: number) {
   todoList.value.splice(idx, 1);
 
-  const index = todos.value.findIndex(item => item.id === id);
+  const index = todos.value.findIndex((item) => item.id === id);
 
   index >= 0 && todos.value.splice(index, 1);
 }
 
-function sortTodoList(sortType: 'asc' | 'desc') {
+function sortTodoList(sortType: "asc" | "desc") {
   todoList.value = todoList.value.sort((a, b) =>
-    (sortType === 'asc' ? dayjs(a.createTime).isAfter(b.createTime) : dayjs(b.createTime).isAfter(a.createTime)) ? 1 : -1
+    (
+      sortType === "asc"
+        ? dayjs(a.createTime).isAfter(b.createTime)
+        : dayjs(b.createTime).isAfter(a.createTime)
+    )
+      ? 1
+      : -1
   );
 }
 
 function isOverdue(date: string | Dayjs) {
-  if (dayjs(date).isToday()) return 'dueToday';
-  else if (dayjs(date) < dayjs()) return 'overdue';
-  else return ''
+  if (dayjs(date).isToday()) return "dueToday";
+  else if (dayjs(date) < dayjs()) return "overdue";
+  else return "";
 }
 
 const repeatTodo = (item: Todo) => {
@@ -176,50 +196,49 @@ const repeatTodo = (item: Todo) => {
     overdueTime: undefined,
     createTime: undefined,
     remindTime: undefined,
-    reminded: undefined
-  }
+    reminded: undefined,
+  };
 
   item.overdue = true;
   item.overdueTime = dayjs().format();
 
   addTodo(newTodo);
-}
+};
 
 const onDoneChange = (e: Event, todo: Todo) => {
   todo.done = !todo.done;
   todo.completionTime = todo.done ? dayjs().format() : "";
-}
+};
 
 function checkRepeatTask() {
-  const repeat = todoList.value.findIndex(item => !!item.repeatType);
-  if (repeat >= 0 && typeof Worker !== 'undefined') {
+  const repeat = todoList.value.findIndex((item) => !!item.repeatType);
+  if (repeat >= 0 && typeof Worker !== "undefined") {
     const worker = new Worker(
-      new URL('../workers/worker.js', import.meta.url),
-      { type: 'module' }
+      new URL("../workers/worker.js", import.meta.url),
+      { type: "module" }
     );
     const todos = {
-      type: 'start',
-      todoList: JSON.parse(JSON.stringify(todoList.value))
+      type: "start",
+      todoList: JSON.parse(JSON.stringify(todoList.value)),
     };
     worker.postMessage(todos);
-    worker.addEventListener('message', e => {
+    worker.addEventListener("message", (e) => {
       repeatTodo(e.data);
-    })
+    });
 
     onUnmounted(() => {
       worker.postMessage({
-        type: 'stop'
+        type: "stop",
       });
     });
   }
 }
 
-watch(todoList, () => checkRepeatTask)
+watch(todoList, () => checkRepeatTask);
 
 onMounted(() => {
   checkRepeatTask();
-})
-
+});
 </script>
 
 <style lang="scss" scoped>
@@ -227,6 +246,7 @@ onMounted(() => {
 
 .container {
   padding: 0;
+  margin: 2px 24px;
 }
 
 button {
@@ -270,7 +290,6 @@ button {
   align-items: center;
 }
 
-
 .taskItemInfo-date {
   &.dueToday {
     color: #2564cf;
@@ -281,7 +300,6 @@ button {
     color: #a80000;
     // color: var(--font-color-warning);
   }
-
 }
 
 .taskItem-title-wrapper {
@@ -319,12 +337,12 @@ button {
     &::after {
       color: #797775;
       // color: var(--font-color-secondary);
-      content: '\2022';
+      content: "\2022";
       margin: 0 6px;
     }
 
     &:last-child::after {
-      content: '';
+      content: "";
     }
   }
 
@@ -333,7 +351,6 @@ button {
     white-space: nowrap;
   }
 }
-
 
 @media (hover: hover) {
   .taskItem:hover {
@@ -346,7 +363,7 @@ button {
 .flip-list-move,
 .flip-list-enter-active,
 .flip-list-leave-active {
-  transition: all 1s ease;
+  transition: all .8s ease;
 }
 
 .flip-list-enter-from,

@@ -89,8 +89,8 @@ import { useI18n } from "vue-i18n";
 import { useTodos } from "../../hooks/useTodoList";
 import { useDate } from "../../hooks/useDate";
 import { i18nDayjs } from "../../hooks/useLocale";
-import DropdownCalendar from "../dropdown/dropdown.vue";
-import tooltips from "../tooltips/tooltips.vue";
+import DropdownCalendar from "../../components/dropdown/dropdown.vue";
+import tooltips from "../../components/tooltips/tooltips.vue";
 
 let { todos, addTodo, clear, showModal } = useTodos();
 let { datePipe, calendarPipe } = useDate();

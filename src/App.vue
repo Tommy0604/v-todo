@@ -1,25 +1,15 @@
 <template>
   <a-config-provider :locale="locale">
     <a-layout>
-      <div class="column-left">
+      <menu class="column-left">
         <left-menu></left-menu>
-      </div>
+      </menu>
       <a-layout class="column-right">
-        <a-layout-header>
-          <TodoHeader />
-        </a-layout-header>
-        <a-layout-content>
-          <router-view v-slot="{ Component, route }">
-            <transition name="route" mode="out-in" appear>
-              <div class="todo-content" :key="route.name">
-                <KeepAlive>
-                  <component :is="Component" />
-                </KeepAlive>
-              </div>
-            </transition>
-          </router-view>
-        </a-layout-content>
-        <TodoFooter />
+        <router-view v-slot="{ Component, route }">
+          <KeepAlive>
+            <component :is="Component" :key="route.name" />
+          </KeepAlive>
+        </router-view>
       </a-layout>
     </a-layout>
   </a-config-provider>
@@ -27,13 +17,11 @@
 
 <script lang="ts" setup>
 import { watch } from "vue";
-import LeftMenu from "./components/menu/menu.vue";
-import TodoHeader from "./components/header/header.vue";
-import TodoFooter from "./components/footer/footer.vue";
+import LeftMenu from "./layout/nav-menu/menu.vue";
 
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
-dayjs.locale('zh-cn');
+dayjs.locale("zh-cn");
 
 import { storeToRefs } from "pinia";
 import { useI18nStore } from "./hooks/useStores";
@@ -70,9 +58,5 @@ watch(language, (val) => {
   background-color: #eee;
   box-sizing: border-box;
   overflow: hidden;
-}
-
-.todo-content {
-  margin: 0 24px;
 }
 </style>

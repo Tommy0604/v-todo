@@ -23,18 +23,14 @@
       </div>
       <div class="sortingOptions">
         <tooltips :title="isSort ? $t('header.des', 0) : $t('header.asc', 0)">
-          <a-button type="link" @click="setSort">
+          <a-button type="link" @click="onSort">
             <swap-outlined :class="isSort ? 'rotate' : ''" />
             {{ isSort ? $t("header.asc", 1) : $t("header.des", 1) }}
           </a-button>
         </tooltips>
       </div>
-      <input
-        class="theme-box"
-        type="color"
-        :value="colorState.primaryColor"
-        @input="(e) => onColorChange('primaryColor', e)"
-      />
+      <input class="theme-box" type="color" :value="colorState.primaryColor"
+        @input="(e) => onColorChange('primaryColor', e)" />
     </div>
   </div>
 </template>
@@ -47,17 +43,26 @@ export default {
 
 <script setup lang="ts">
 import { dayjs, IconFont, SwapOutlined } from "../../shared";
-import { computed, ref, reactive, onMounted, watchEffect } from "vue";
+import { computed, ref, reactive, onMounted, watchEffect, watch } from "vue";
 import { useRoute } from "vue-router";
 import { TodoType } from "../../models/todo";
 import { ConfigProvider } from "ant-design-vue";
-import { useSort } from "../../hooks/useTool";
 import { i18nDayjs, setLocale } from "../../hooks/useLocale";
 import { LANG_VALUE } from "../../i18n";
-import tooltips from "../tooltips/tooltips.vue";
+import tooltips from "../../components/tooltips/tooltips.vue";
 
-let { isSort, setSort } = useSort();
 let route = useRoute();
+
+let props = defineProps({
+  isSort: Boolean
+});
+// let isSort = ref(false);
+let emits = defineEmits<{
+  (e: 'onSort'): void
+}>()
+
+const onSort = () => emits('onSort');
+
 let iconType = ref<string>();
 let todayHint = ref<string | null>();
 let title = computed(() => {
@@ -140,7 +145,7 @@ const onColorChange = (type: string, e: any) => {
   display: flex;
   align-items: center;
   margin: 0;
-  padding: 6px 8px;
+  padding: 6px 8px 8px 0px;
   color: #323130;
   // color: var(--font-color-primary);
   white-space: nowrap;
@@ -159,7 +164,6 @@ const onColorChange = (type: string, e: any) => {
   display: flex;
   color: #797775;
   // color: var(--font-color-secondary);
-  padding: 0 10px;
   font-weight: 400;
 }
 
@@ -179,7 +183,7 @@ const onColorChange = (type: string, e: any) => {
     transition: transform 1s ease-in-out;
   }
 
-  .language > .ant-btn {
+  .language>.ant-btn {
     width: 42px;
     padding: 0;
     margin: 0;
