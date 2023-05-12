@@ -3,29 +3,13 @@
     <div class="plus">
       <plus-outlined @click="addTodoItem" />
     </div>
-    <a-input
-      v-model:value="title"
-      :bordered="false"
-      :placeholder="$t('add_task')"
-      @keydown.enter="addTodoItem()"
-      @compositionstart="lock = false"
-      @compositionend="lock = true"
-      @change="inputChange"
-    />
-    <div
-      class="tools"
-      v-if="ishowTool"
-      :class="ishowTool ? 'enter-action' : 'leave-active'"
-    >
+    <a-input v-model:value="title" :bordered="false" :placeholder="$t('add_task')" @keydown.enter="addTodoItem()"
+      @compositionstart="lock = false" @compositionend="lock = true" @change="inputChange" />
+    <div class="tools" v-if="ishowTool" :class="ishowTool ? 'enter-action' : 'leave-active'">
       <div class="tool-calendar">
         <tooltips :title="$t('footer.calendar')" :isDefault="false">
-          <DropdownCalendar
-            ref="dropdownRef"
-            :iconName="'icon-calendar'"
-            :calendarList="calendarList"
-            @clickMenu="clickDue"
-            :showCustomItem="true"
-          />
+          <DropdownCalendar ref="dropdownRef" :iconName="'icon-calendar'" :calendarList="calendarList"
+            @clickMenu="clickDue" :showCustomItem="true" />
         </tooltips>
         <div class="due-date-text">
           <span class="date">
@@ -35,13 +19,8 @@
       </div>
       <div class="tool-remind">
         <tooltips :title="$t('footer.remind')" :isDefault="false">
-          <DropdownCalendar
-            :iconName="'icon-remind'"
-            :calendarList="remindList"
-            @clickMenu="clickRemind"
-            :showTimePick="true"
-            :showCustomItem="true"
-          />
+          <DropdownCalendar :iconName="'icon-remind'" :calendarList="remindList" @clickMenu="clickRemind"
+            :showTimePick="true" :showCustomItem="true" />
         </tooltips>
         <div class="due-date-text">
           <span class="date">
@@ -52,11 +31,7 @@
       <!-- TODO custom-->
       <div class="tool-repeat">
         <tooltips :title="$t('footer.repeat')" :isDefault="false">
-          <DropdownCalendar
-            :iconName="'icon-repeat'"
-            :calendarList="repeadList"
-            @clickMenu="clickRepeat"
-          />
+          <DropdownCalendar :iconName="'icon-repeat'" :calendarList="repeadList" @clickMenu="clickRepeat" />
         </tooltips>
         <div class="due-date-text">
           <span class="date">
@@ -83,14 +58,11 @@ import {
   Repeat,
   RepeatType,
   TodoType,
-} from "../../models";
-import { PlusOutlined, dayjs, Dayjs } from "../../shared";
+} from "@/models";
+import { PlusOutlined, dayjs, Dayjs } from "@/shared";
+import { i18nDayjs, useDate, useTodos } from "@/hooks";
 import { useI18n } from "vue-i18n";
-import { useTodos } from "../../hooks/useTodoList";
-import { useDate } from "../../hooks/useDate";
-import { i18nDayjs } from "../../hooks/useLocale";
-import DropdownCalendar from "../../components/dropdown/dropdown.vue";
-import tooltips from "../../components/tooltips/tooltips.vue";
+import { DropdownCalendar, Tooltips } from "@/components";
 
 let { todos, addTodo, clear, showModal } = useTodos();
 let { datePipe, calendarPipe } = useDate();
@@ -261,8 +233,8 @@ function clickRemind(type: string, date?: Dayjs): void {
     type === DateType.LATER_TODAY
       ? _remindTime.format("YYYY-MM-DD HH:mm")
       : [DateType.TOMORROW, DateType.NEXT_WEEK].includes(type as DateType)
-      ? _remindTime.format("YYYY-MM-DD 9:00")
-      : date?.format("YYYY-MM-DD HH:mm");
+        ? _remindTime.format("YYYY-MM-DD 9:00")
+        : date?.format("YYYY-MM-DD HH:mm");
 
   remindTime.value = dayjs(dateFormat);
   remindText.value = dateFormat;
@@ -297,7 +269,7 @@ $class-prefix: "tool";
     font-size: 18px;
     margin-left: 4px;
 
-    > span {
+    >span {
       white-space: nowrap;
     }
   }

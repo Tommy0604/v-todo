@@ -7,7 +7,7 @@
 
 <script lang="ts">
 export default {
-  name: "tooltips",
+  name: "Tooltips",
 };
 </script>
 <script setup lang="ts">

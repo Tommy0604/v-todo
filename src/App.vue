@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import { watch } from "vue";
-import LeftMenu from "./layout/nav-menu/menu.vue";
+import { LeftMenu } from "@/layout";
 
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";

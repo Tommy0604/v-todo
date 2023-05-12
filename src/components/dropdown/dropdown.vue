@@ -51,13 +51,10 @@ export default {
 };
 </script>
 <script lang="ts" setup>
-import { IconFont, range } from "../../shared";
+import { IconFont, range } from "@/shared";
 import dayjs, { Dayjs } from "dayjs";
 import { ref } from "vue";
-import { useDate } from "../../hooks/useDate";
-import { Calendar, DateType, RepeatType } from "../../models";
-
-let { datePipe } = useDate();
+import { Calendar, DateType, RepeatType } from "@/models";
 
 let dropdownVisible = ref(),
   duePickerOpen = ref<boolean>(false),

@@ -53,7 +53,7 @@ export default {
 <script setup lang="ts">
 import { onMounted, reactive, ref, watch } from "vue";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons-vue";
-import { IconFont } from "../../shared";
+import { IconFont } from "@/shared";
 
 let collapsed = ref(false);
 let oldBarWidth = ref<number>();
@@ -96,13 +96,13 @@ onMounted(() => {
       }
     });
   }
-  const observer = new ResizeObserver((entries) => {
+  const resizeObserver = new ResizeObserver((entries) => {
     for (let entry of entries) {
       handleBarWidthChange();
     }
   });
 
-  eleResizeBar && observer.observe(eleResizeBar);
+  eleResizeBar && resizeObserver.observe(eleResizeBar);
 });
 </script>
 

@@ -42,14 +42,14 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { dayjs, IconFont, SwapOutlined } from "../../shared";
+import { dayjs, IconFont, SwapOutlined } from "@/shared";
 import { computed, ref, reactive, onMounted, watchEffect, watch } from "vue";
 import { useRoute } from "vue-router";
-import { TodoType } from "../../models/todo";
+import { TodoType } from "@/models/todo";
 import { ConfigProvider } from "ant-design-vue";
-import { i18nDayjs, setLocale } from "../../hooks/useLocale";
-import { LANG_VALUE } from "../../i18n";
-import tooltips from "../../components/tooltips/tooltips.vue";
+import { i18nDayjs, setLocale } from "@/hooks/useLocale";
+import { LANG_VALUE } from "@/i18n";
+import tooltips from "@/components/tooltips/tooltips.vue";
 
 let route = useRoute();
 

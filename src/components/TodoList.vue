@@ -72,11 +72,11 @@ import {
   onDeactivated,
 } from "vue";
 // import modal from "./modal.vue";
-import { RepeatType, Todo, TodoType } from "../models";
+import { Todo, TodoType } from "@/models";
 import { useTodos } from "../hooks/useTodoList";
 import { useRouter, useRoute, onBeforeRouteLeave } from "vue-router";
-import { Dayjs, dayjs, IconFont } from "../shared";
-import { useDate } from "../hooks/useDate";
+import { Dayjs, dayjs, IconFont } from "@/shared";
+import { useDate } from "@/hooks/useDate";
 let { todos, clear, showModal, addTodo } = useTodos();
 let { calendarPipe, overduePipe } = useDate();
 
