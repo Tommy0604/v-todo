@@ -98,9 +98,11 @@ const colorState = reactive({
 
 const checked = ref<boolean>(true);
 
-watchEffect(() => {
-  setLocale(checked.value ? LANG_VALUE.Zh : LANG_VALUE.En);
-});
+watch(
+  checked,
+  (_val, oldVal) => setLocale(_val ? LANG_VALUE.Zh : LANG_VALUE.En),
+  { immediate: true }
+);
 
 onMounted(() => {
   ConfigProvider.config({
