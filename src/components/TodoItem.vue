@@ -1,32 +1,32 @@
 <template>
   <a-dropdown :trigger="['contextmenu']" overlayClassName="todo-item">
     <div class="todo-item">
-      <a-checkbox @change="onDoneChange($event, todo)" :checked="todo.done"></a-checkbox>
-      <button class="todo-item__title-wrapper">
-        <span :class="{ done: todo.done }"> {{ todo.title }} </span>
+      <a-checkbox @change="onDoneChange($event, todoItem)" :checked="todoItem.done"></a-checkbox>
+      <button class="todo-item__title-wrapper" @click="onClick">
+        <span :class="{ done: todoItem.done }"> {{ todoItem?.title }} </span>
         <div class="meta-data-info-group">
-          <span class="meta-data-info" v-if="todo.overdueTime">
-            <span class="todo-info__date" :class="isOverdue(todo.overdueTime)">
+          <span class="meta-data-info" v-if="todoItem.overdueTime">
+            <span class="todo-info__date" :class="isOverdue(todoItem.overdueTime)">
               <icon-font :type="'icon-calendar'" :style="{ 'font-size': '1.6rem' }" />
               <span class="todo-info__label">{{
-                overduePipe(todo.overdueTime)
+                overduePipe(todoItem.overdueTime)
               }}</span>
             </span>
           </span>
-          <span class="meta-data-info" v-if="todo.remindTime">
+          <span class="meta-data-info" v-if="todoItem.remindTime">
             <span class="todo-info__reminder">
               <icon-font :type="'icon-remind'" :style="{ 'font-size': '1.6rem' }" />
               <span class="todo-info__label">{{
-                calendarPipe(todo.remindTime)
+                calendarPipe(todoItem.remindTime)
               }}</span>
             </span>
           </span>
-          <span class="meta-data-info" v-if="todo.completionTime">
+          <span class="meta-data-info" v-if="todoItem.completionTime">
             <span class="todo-info__date">
               <icon-font :type="'icon-sun'" />
-              <span class="todo-info__label">{{
-                calendarPipe(todo.remindTime)
-              }}</span>
+              <span class="todo-info__label">
+                {{ calendarPipe(todoItem.remindTime) }}
+              </span>
             </span>
           </span>
         </div>
@@ -34,12 +34,13 @@
     </div>
     <template #overlay>
       <a-menu>
-        <a-menu-item key="1" @click="onRemove(todo.id)">
-          删除任务
+        <a-menu-item key="1" @click="onRemove(todoItem.id)">
+          {{ $t('delete_task') }}
         </a-menu-item>
       </a-menu>
     </template>
   </a-dropdown>
+  <Drawer :visible="visible" :todo="todoItem" @close="visible = false"></Drawer>
 </template>
 <script lang="ts">
 export default {
@@ -47,29 +48,41 @@ export default {
 }
 </script>
 <script setup lang="ts">
+import { reactive, ref } from "vue";
 // import modal from "./modal.vue";
 import { Todo } from "@/models";
 import { Dayjs, dayjs, IconFont } from "@/shared";
-import { useDate } from "@/hooks/useDate";
+import { useDate, useTodos } from "@/hooks";
+import { Drawer } from ".";
+// let { todo } = useTodos();
 let { calendarPipe, overduePipe } = useDate();
-
 const emits = defineEmits<{ (e: 'onRemove', id: string): void }>()
 
-let props = defineProps<{ todo: Todo }>();
+let props = defineProps<{ data: Todo }>();
+let visible = ref<boolean>(false);
 
-function isOverdue(date: string | Dayjs) {
-  if (dayjs(date).isToday()) return "dueToday";
-  else if (dayjs(date) < dayjs()) return "overdue";
-  else return "";
+let todoItem = reactive(props.data);
+const isOverdue = (date: string | Dayjs) => {
+  return dayjs(date).isToday() ?
+    "dueToday" : dayjs(date) < dayjs() ?
+      "overdue" : "";
 }
 
-const onDoneChange = (e: Event, todo: Todo) => {
-  todo.done = !todo.done;
-  todo.completionTime = todo.done ? dayjs().format() : "";
+const onDoneChange = (e: Event, data: Todo) => {
+  data.done = !data.done;
+  data.completionTime = data.done ? dayjs().format() : "";
 };
+
+const onClick = () => {
+  // todo.value = todoItem;
+  visible.value = true;
+}
 
 const onRemove = (id: string) => emits('onRemove', id);
 
+// const afterCloseChange = (data: Todo) => {
+//   visible.value = false;
+// }
 </script>
 
 <style lang="scss" scoped>
@@ -165,27 +178,8 @@ button {
 
 @media (hover: hover) {
   .todo-item:hover {
-    background-color: #eff6fc;
+    background-color: #f6f6f5;
     // background-color: $--bg-hover;
-  }
-}
-
-::v-deep() {
-  .ant-checkbox-inner {
-    border-radius: 10px;
-  }
-
-  .ant-checkbox-checked::after {
-    border-radius: 10px;
-  }
-
-  .ant-checkbox-wrapper {
-    padding: 0px;
-    cursor: pointer;
-    height: 32px;
-    width: 32px;
-    position: relative;
-    line-height: 32px;
   }
 }
 </style>

@@ -1,11 +1,12 @@
 import dayjs, { Dayjs } from "dayjs";
-import { DateType } from "../models/base";
-import { i18nDayjs } from "./useLocale";
+import { DateType, RepeatType } from "@/models";
+import { i18nDayjs } from ".";
 import { i18n } from "../i18n";
+import { computed } from "vue";
 const { t } = i18n.global;
 
 function useDate() {
-  function datePipe(dateType: DateType): Dayjs {
+  function duePipe(dateType: DateType): Dayjs {
     let date = dayjs();
     switch (dateType) {
       case DateType.TODAY:
@@ -25,6 +26,22 @@ function useDate() {
         break;
     }
     return date;
+  }
+
+  function transfromDuePipe(date: string | Dayjs | undefined) {
+    if (!date) return;
+    const isToday = dayjs(date).isSame(dayjs(), 'day');
+    const isTomorrow = dayjs(date).isSame(dayjs().add(1, 'day'), 'day');
+    const isNextWeek = dayjs(date).isSame(dayjs().add(1, 'week'), 'week');
+    let dateType;
+    if (isToday) {
+      dateType = DateType.TODAY;
+    } else if (isTomorrow) {
+      dateType = DateType.TOMORROW;
+    } else if (isNextWeek) {
+      dateType = DateType.LATER_TODAY;
+    }
+    return dateType;
   }
 
   function calendarPipe(
@@ -50,7 +67,96 @@ function useDate() {
       sameElse: "h:mm A, MMMM D, YYYY",
     });
   }
-  return { datePipe, calendarPipe, overduePipe };
+
+  function getCalendarList() {
+    let day = dayjs().day();
+    return computed(() => [
+      {
+        key: DateType.TODAY,
+        icon: "today",
+        text: "today",
+        secondaryText: i18nDayjs().isoWeekday(day).format("ddd"),
+      },
+      {
+        key: DateType.TOMORROW,
+        icon: "tomorrow",
+        text: "tomorrow",
+        secondaryText: i18nDayjs()
+          .isoWeekday(day + 1)
+          .format("ddd"),
+      },
+      {
+        key: DateType.NEXT_WEEK,
+        icon: "next-week",
+        text: "next_week",
+        secondaryText: i18nDayjs().isoWeekday(1).format("ddd"),
+      },
+    ]);
+  }
+
+  function getRemindList() {
+    return computed(() => {
+      return [
+        {
+          key: DateType.LATER_TODAY,
+          icon: "later-today",
+          text: "later_today",
+          secondaryText: i18nDayjs()
+            .add(dayjs().minute() >= 30 ? 4 : 3, "h")
+            .format("h:00 A"),
+        },
+        {
+          key: DateType.TOMORROW,
+          icon: "later-tomorrow",
+          text: "tomorrow",
+          secondaryText:
+            i18nDayjs().add(1, "day").format("ddd, 9 ") + t("calendar.am"),
+        },
+        {
+          key: DateType.NEXT_WEEK,
+          icon: "later-next-week",
+          text: "next_week",
+          secondaryText:
+            i18nDayjs().isoWeekday(1).format("ddd, 9 ") + t("calendar.am"),
+        },
+      ];
+    });
+  }
+
+  function getRepeadList() {
+    return [
+      {
+        key: RepeatType.DAILY,
+        icon: "daily",
+        text: RepeatType.DAILY,
+      },
+      {
+        key: RepeatType.WEEKDAYS,
+        icon: "weekdays",
+        text: RepeatType.WEEKDAYS,
+      },
+      {
+        key: RepeatType.WEEKLY,
+        icon: "weekly",
+        text: RepeatType.WEEKLY,
+      },
+      {
+        key: RepeatType.MONTHLY,
+        icon: "monthly",
+        text: RepeatType.MONTHLY,
+      },
+      {
+        key: RepeatType.YEARLY,
+        icon: "yearly",
+        text: RepeatType.YEARLY,
+      },
+    ]
+  }
+
+  return {
+    duePipe, calendarPipe, overduePipe, transfromDuePipe,
+    getCalendarList, getRemindList, getRepeadList
+  };
 }
 
 /**

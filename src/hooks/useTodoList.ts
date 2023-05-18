@@ -4,6 +4,7 @@ import { ref, computed, watchEffect, Ref } from "vue";
 import { Todo, TodoType } from "../models/todo";
 
 let todos = useStorage("todos", []);
+let todo = ref<Todo>();
 let showModal = ref(false);
 type AddOptions = {
   title: string;
@@ -49,14 +50,20 @@ function useTodos() {
   function clear() {
     todos.value = todos.value.filter((v) => !v.done);
   }
-  return { todos, addTodo, clear, showModal };
+  return { todos, todo, addTodo, clear, showModal };
 }
 
 function useStorage(name: string, value: Array<Todo> = []): Ref<Array<Todo>> {
-  let data = ref<Array<Todo>>(JSON.parse(localStorage.getItem(name) || "[]"));
-  watchEffect(() => {
-    localStorage.setItem(name, JSON.stringify(data.value));
-  });
+  let data;
+  // TODO: Unable to get window because of web worker
+  if (typeof localStorage !== "undefined") {
+    data = ref<Array<Todo>>(JSON.parse(localStorage.getItem(name) || "[]"));
+    watchEffect(() => {
+      typeof localStorage !== "undefined" && localStorage.setItem(name, JSON.stringify(data.value));
+    });
+  } else {
+    data = ref([]);
+  }
   return data;
 }
 

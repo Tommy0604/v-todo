@@ -1,5 +1,5 @@
 export interface Todo {
-  id: string;
+  readonly id: string;
   title: string;
   done: boolean;
   type: string;
@@ -26,5 +26,5 @@ export interface Calendar {
   secondaryText?: string;
 }
 
-export interface Remind extends Calendar {}
-export interface Repeat extends Calendar {}
+export interface Remind extends Calendar { }
+export interface Repeat extends Calendar { }

@@ -72,3 +72,20 @@ html body {
  justify-content: center;
  align-items: center;
 }
+
+.ant-checkbox-inner {
+  border-radius: 10px;
+}
+
+.ant-checkbox-checked::after {
+  border-radius: 10px;
+}
+
+.ant-checkbox-wrapper {
+  padding: 0px;
+  cursor: pointer;
+  height: 32px;
+  width: 32px;
+  position: relative;
+  line-height: 32px;
+}

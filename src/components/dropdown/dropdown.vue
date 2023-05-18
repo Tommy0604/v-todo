@@ -1,6 +1,8 @@
 <template>
   <a-dropdown :trigger="['click']" :overlayClassName="'date-overlay'" :visible="dropdownVisible">
-    <icon-font ref="iconRef" :type="iconName" @focus="onFocus($event)" @blur="onBlur($event)" />
+    <slot>
+      <icon-font ref="iconRef" :type="iconName || ''" @focus="onFocus($event)" @blur="onBlur($event)" />
+    </slot>
     <template #overlay>
       <a-menu @click="clickMenu" :triggerSubMenuAction="subMenuActionType">
         <a-menu-item v-for="item in calendarList" :key="item.key" @mousedown="(e) => e.preventDefault()">
@@ -53,8 +55,12 @@ export default {
 <script lang="ts" setup>
 import { IconFont, range } from "@/shared";
 import dayjs, { Dayjs } from "dayjs";
-import { ref } from "vue";
+import { ref, useSlots } from "vue";
 import { Calendar, DateType, RepeatType } from "@/models";
+
+const slots = useSlots()
+
+const hasDefaultSlot = slots.default === undefined;
 
 let dropdownVisible = ref(),
   duePickerOpen = ref<boolean>(false),
@@ -73,7 +79,7 @@ const emit = defineEmits<{
 
 let props = defineProps<{
   calendarList: Array<Calendar>,
-  iconName: string,
+  iconName?: string,
   showTimePick?: boolean,
   showCustomItem?: boolean,
 }>();
@@ -89,10 +95,10 @@ const clickMenu = (e) => {
 
   if (e.keyPath.length < 2) {
     e.domEvent.stopPropagation();
-    iconRef.value.blur();
+    hasDefaultSlot && iconRef.value.blur();
   } else {
-    props.showTimePick ? timePickOpen.value || iconRef.value.focus()
-      : iconRef.value.focus();
+    props.showTimePick ? timePickOpen.value || (hasDefaultSlot && iconRef.value.focus())
+      : (hasDefaultSlot && iconRef.value.focus());
   }
 };
 

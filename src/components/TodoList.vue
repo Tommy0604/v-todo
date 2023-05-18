@@ -4,7 +4,7 @@
   <div v-if="todoList.length">
     <transition-group name="flip-list" tag="ul" class="container">
       <div class="task-item" v-for="(todo, i) in todoList" :key="todo.id">
-        <TodoItem :todo="todo" @on-remove="removeTodo"></TodoItem>
+        <TodoItem :data="todo" @on-remove="removeTodo"></TodoItem>
       </div>
     </transition-group>
   </div>
@@ -24,11 +24,11 @@
 import { useDate, useTodos } from '@/hooks';
 import { Todo, TodoType } from '@/models';
 import dayjs, { Dayjs } from 'dayjs';
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { getCurrentInstance, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 let { todos, clear, showModal, addTodo } = useTodos();
 import TodoItem from "./TodoItem.vue";
-
+const instance = getCurrentInstance();
 const props = defineProps<{
   isSort: Boolean,
 }>()
@@ -67,7 +67,9 @@ watch(
   (_val, oldVal) => sortTodoList(_val ? "asc" : "desc"),
   { immediate: true }
 );
-watch(todoList, () => checkRepeatTask);
+watch(todoList, () => {
+  checkRepeatTask()
+});
 
 onMounted(() => {
   checkRepeatTask();
@@ -125,12 +127,6 @@ function removeTodo(id: string) {
   index >= 0 && todos.value.splice(index, 1);
 }
 
-function isOverdue(date: string | Dayjs) {
-  if (dayjs(date).isToday()) return "dueToday";
-  else if (dayjs(date) < dayjs()) return "overdue";
-  else return "";
-}
-
 function sortTodoList(sortType: "asc" | "desc") {
   todoList.value = todoList.value.sort((a, b) =>
     (
@@ -142,11 +138,6 @@ function sortTodoList(sortType: "asc" | "desc") {
       : -1
   );
 }
-
-const onDoneChange = (e: Event, todo: Todo) => {
-  todo.done = !todo.done;
-  todo.completionTime = todo.done ? dayjs().format() : "";
-};
 
 function checkRepeatTask() {
   const repeat = todoList.value.findIndex((item) => !!item.repeatType);
@@ -164,11 +155,16 @@ function checkRepeatTask() {
       repeatTodo(e.data);
     });
 
+    /**
+     * Since the webworker is a standalone process,
+     * it is considered outside the setup scope,
+     * so import the current component instance to avoid lifecycle mobilization warnings.
+     */
     onUnmounted(() => {
       worker.postMessage({
         type: "stop",
       });
-    });
+    }, instance);
   }
 }
 

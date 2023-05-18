@@ -4,6 +4,8 @@
   "completed": "已完成",
   "all": "全部",
   "add_task": "添加任务",
+  "delete_task": "删除任务",
+  "created_time": "创建于{time}",
   "calendar": {
     "am": "上午",
     "pm": "下午",
@@ -26,8 +28,8 @@
   },
   "footer": {
     "calendar": "添加截止日期",
-    "remind": "提醒时间",
-    "repeat": "重复"
+    "remind": "添加提醒时间",
+    "repeat": "重复周期"
   }
 }
 

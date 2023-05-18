@@ -4,6 +4,8 @@
   "completed": "Completed",
   "all": "All",
   "add_task": "Add a task",
+  "delete_task": "Delete Todo",
+  "created_time": "Created {time}",
   "calendar": {
     "am": "AM",
     "pm": "PM",

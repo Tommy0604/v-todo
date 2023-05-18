@@ -65,7 +65,7 @@ import { useI18n } from "vue-i18n";
 import { DropdownCalendar, Tooltips } from "@/components";
 
 let { todos, addTodo, clear, showModal } = useTodos();
-let { datePipe, calendarPipe } = useDate();
+let { duePipe, calendarPipe, getCalendarList, getRemindList, getRepeadList } = useDate();
 
 const { t } = useI18n();
 let route = useRoute();
@@ -87,34 +87,8 @@ let pickDateText = ref<string>(),
   repeatText = ref<string>();
 
 let calendarList: ComputedRef<Calendar[]> = getCalendarList();
-let remindList: ComputedRef<Remind[]> = getRemindText();
-let repeadList: Repeat[] = [
-  {
-    key: RepeatType.DAILY,
-    icon: "daily",
-    text: RepeatType.DAILY,
-  },
-  {
-    key: RepeatType.WEEKDAYS,
-    icon: "weekdays",
-    text: RepeatType.WEEKDAYS,
-  },
-  {
-    key: RepeatType.WEEKLY,
-    icon: "weekly",
-    text: RepeatType.WEEKLY,
-  },
-  {
-    key: RepeatType.MONTHLY,
-    icon: "monthly",
-    text: RepeatType.MONTHLY,
-  },
-  {
-    key: RepeatType.YEARLY,
-    icon: "yearly",
-    text: RepeatType.YEARLY,
-  },
-];
+let remindList: ComputedRef<Remind[]> = getRemindList();
+let repeadList: Repeat[] = getRepeadList();
 let dropdownVisible = ref();
 
 watch(
@@ -162,65 +136,10 @@ function inputChange() {
   ishowTool.value = !!title.value;
 }
 
-function getCalendarList() {
-  let day = dayjs().day();
-  return computed(() => [
-    {
-      key: DateType.TODAY,
-      icon: "today",
-      text: "today",
-      secondaryText: i18nDayjs().isoWeekday(day).format("ddd"),
-    },
-    {
-      key: DateType.TOMORROW,
-      icon: "tomorrow",
-      text: "tomorrow",
-      secondaryText: i18nDayjs()
-        .isoWeekday(day + 1)
-        .format("ddd"),
-    },
-    {
-      key: DateType.NEXT_WEEK,
-      icon: "next-week",
-      text: "next_week",
-      secondaryText: i18nDayjs().isoWeekday(1).format("ddd"),
-    },
-  ]);
-}
-
-function getRemindText() {
-  return computed(() => {
-    return [
-      {
-        key: DateType.LATER_TODAY,
-        icon: "later-today",
-        text: "later_today",
-        secondaryText: i18nDayjs()
-          .add(dayjs().minute() >= 30 ? 4 : 3, "h")
-          .format("h:00 A"),
-      },
-      {
-        key: DateType.TOMORROW,
-        icon: "later-tomorrow",
-        text: "tomorrow",
-        secondaryText:
-          i18nDayjs().add(1, "day").format("ddd, 9 ") + t("calendar.am"),
-      },
-      {
-        key: DateType.NEXT_WEEK,
-        icon: "later-next-week",
-        text: "next_week",
-        secondaryText:
-          i18nDayjs().isoWeekday(1).format("ddd, 9 ") + t("calendar.am"),
-      },
-    ];
-  });
-}
-
 function clickDue(type: string, date?: Dayjs): void {
   const dueType = [DateType.TODAY, DateType.TOMORROW, DateType.NEXT_WEEK];
   const dateFormat = dueType.some((s) => s === type)
-    ? datePipe(type as DateType)
+    ? duePipe(type as DateType)
     : date;
 
   overdueTime.value = dateFormat?.endOf("d");
@@ -228,7 +147,7 @@ function clickDue(type: string, date?: Dayjs): void {
 }
 
 function clickRemind(type: string, date?: Dayjs): void {
-  const _remindTime = datePipe(type as DateType);
+  const _remindTime = duePipe(type as DateType);
   const dateFormat =
     type === DateType.LATER_TODAY
       ? _remindTime.format("YYYY-MM-DD HH:mm")
