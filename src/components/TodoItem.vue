@@ -40,7 +40,7 @@
       </a-menu>
     </template>
   </a-dropdown>
-  <Drawer :visible="visible" :todo="todoItem" @close="visible = false"></Drawer>
+  <Drawer :visible="visible" :todo="todoItem" @close="afterCloseChange"></Drawer>
 </template>
 <script lang="ts">
 export default {
@@ -52,9 +52,8 @@ import { reactive, ref } from "vue";
 // import modal from "./modal.vue";
 import { Todo } from "@/models";
 import { Dayjs, dayjs, IconFont } from "@/shared";
-import { useDate, useTodos } from "@/hooks";
+import { useDate } from "@/hooks";
 import { Drawer } from ".";
-// let { todo } = useTodos();
 let { calendarPipe, overduePipe } = useDate();
 const emits = defineEmits<{ (e: 'onRemove', id: string): void }>()
 
@@ -74,15 +73,21 @@ const onDoneChange = (e: Event, data: Todo) => {
 };
 
 const onClick = () => {
-  // todo.value = todoItem;
   visible.value = true;
 }
 
 const onRemove = (id: string) => emits('onRemove', id);
 
-// const afterCloseChange = (data: Todo) => {
-//   visible.value = false;
-// }
+const afterCloseChange = (data: Todo) => {
+  visible.value = false;
+
+  todoItem.done = data.done;
+  todoItem.title = data.title;
+  todoItem.overdueTime = data.overdueTime;
+  todoItem.remindTime = data.remindTime;
+  todoItem.repeatType = data.repeatType;
+  todoItem.createTime = data.createTime;
+}
 </script>
 
 <style lang="scss" scoped>

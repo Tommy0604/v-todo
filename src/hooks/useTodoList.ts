@@ -4,7 +4,6 @@ import { ref, computed, watchEffect, Ref } from "vue";
 import { Todo, TodoType } from "../models/todo";
 
 let todos = useStorage("todos", []);
-let todo = ref<Todo>();
 let showModal = ref(false);
 type AddOptions = {
   title: string;
@@ -50,7 +49,7 @@ function useTodos() {
   function clear() {
     todos.value = todos.value.filter((v) => !v.done);
   }
-  return { todos, todo, addTodo, clear, showModal };
+  return { todos, addTodo, clear, showModal };
 }
 
 function useStorage(name: string, value: Array<Todo> = []): Ref<Array<Todo>> {

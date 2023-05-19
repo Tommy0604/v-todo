@@ -11,7 +11,7 @@
       </div>
       <div class="section">
         <div class="section-item">
-          <dropdown-calendar ref="dropdownRef" :calendarList="calendarList" @clickMenu="clickDue" :showCustomItem="true">
+          <DropdownCalendar ref="dropdownRef" :calendarList="calendarList" @clickMenu="clickDue" :showCustomItem="true">
             <button class="section-innerClick">
               <div class="section-inner">
                 <div class="section-icon">
@@ -27,7 +27,7 @@
                 </div>
               </div>
             </button>
-          </dropdown-calendar>
+          </DropdownCalendar>
         </div>
         <div class="section-item">
           <DropdownCalendar :calendarList="remindList" @clickMenu="clickRemind" :showTimePick="true"
@@ -55,7 +55,7 @@
                 </div>
                 <div class="section-content">
                   <div class="section-title">
-                    <span class="date"> {{ repeatType ? t(`calendar.${repeatType}`) : t('footer.repeat') }}</span>
+                    <span class="date"> {{ repeatText ? t(`calendar.${repeatText}`) : t('footer.repeat') }}</span>
                   </div>
                 </div>
               </div>
@@ -80,7 +80,7 @@ import { DropdownCalendar, Tooltips } from "@/components";
 import { useDate, useTodos } from '@/hooks';
 import { Calendar, DateType, Remind, Repeat, Todo } from '@/models';
 import { Dayjs, dayjs, IconFont } from '@/shared';
-import { ComputedRef, reactive, ref, unref } from 'vue';
+import { ComputedRef, reactive, ref, toRefs, unref } from 'vue';
 import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 let { duePipe, overduePipe, calendarPipe, getCalendarList, getRemindList, getRepeadList, transfromDuePipe } = useDate();
@@ -90,7 +90,16 @@ const props = defineProps<{
   todo: Todo
 }>()
 // todo.value!
-let data = unref(props.todo);
+// let data = unref(props.todo);
+const { done, title, overdueTime, remindTime, repeatType, createTime, } = toRefs(props.todo);
+const data = reactive({
+  done: done.value,
+  title: title.value,
+  overdueTime: overdueTime?.value,
+  remindTime: remindTime?.value,
+  repeatType: repeatType?.value,
+  createTime: createTime.value,
+});
 let lock = ref(true);
 let calendarList: ComputedRef<Calendar[]> = getCalendarList();
 let remindList: ComputedRef<Remind[]> = getRemindList();
@@ -98,8 +107,7 @@ let repeadList: Repeat[] = getRepeadList();
 
 let pickDateText = ref<string>(transfromDuePipe(data.overdueTime)),
   remindText = ref<string | undefined>(data.remindTime),
-  repeatType = ref<string | undefined>(data.repeatType),
-  createTime = ref(data.createTime);
+  repeatText = ref<string | undefined>(data.repeatType);
 
 const emits = defineEmits<{
   (e: 'close', data): void
@@ -138,11 +146,13 @@ function clickRemind(type: string, date?: Dayjs): void {
 }
 
 function clickRepeat(type: string): void {
-  data.repeatType = type;
+  data.repeatType = repeatText.value = type;
 }
 </script>
 
 <style scoped lang="scss">
+@import "@/styles/global.scss";
+
 .detail-header {
   display: flex;
   align-items: center;
@@ -153,7 +163,7 @@ function clickRepeat(type: string): void {
   // border-bottom: 0;
 
   &:hover {
-    background-color: #edebe9;
+    background-color: $--bg-hover;
   }
 
   >input {
@@ -167,30 +177,15 @@ function clickRepeat(type: string): void {
 }
 
 .detail {
-  // height: 100%;
-  // position: relative;
-  // background: --bg-primary-accent;
-  // background: var(--bg-primary-accent);
-  // display: flex;
-  // flex-direction: column;
-  // overflow: hidden;
-  // width: 360px;
-  // box-sizing: border-box;
-  // flex: 1;
-  // box-shadow: 0px 1.2px 3.6px rgba(0, 0, 0, 0.1), 0px 6.4px 14.4px rgba(0, 0, 0, 0.1);
-  // box-shadow: 0px 1.2px 3.6px var(--bg-shadow), 0px 6.4px 14.4px var(--bg-shadow);
-
   .section-item {
     position: relative;
     display: flex;
     align-items: center;
     background: #fff;
-    box-shadow: 0px 0.5px 0px 0px #edebe9;
+    box-shadow: 0px 0.5px 0px 1px #edebe9;
 
-    // box-shadow: 0px 0.5px 0px 0px var(--bg-separator);
     &:hover {
-      background-color: #edebe9;
-      // #f6f6f5
+      background-color: $--bg-hover;
       // background-color: var(--bg-hover-tertiary);
     }
 
@@ -251,7 +246,7 @@ function clickRepeat(type: string): void {
   z-index: 5;
   position: relative;
   background: #fff;
-  background: var(--bg-tertiary);
+  // background: var(--bg-tertiary);
   margin: 8px 0;
   border-radius: 4px;
   overflow: hidden;
