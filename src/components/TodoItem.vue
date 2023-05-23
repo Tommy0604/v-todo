@@ -1,6 +1,6 @@
 <template>
-  <a-dropdown :trigger="['contextmenu']" overlayClassName="todo-item">
-    <div class="todo-item">
+  <a-dropdown :trigger="['contextmenu']" overlayClassName="content">
+    <div class="content">
       <a-checkbox @change="onDoneChange($event, todoItem)" :checked="todoItem.done"></a-checkbox>
       <button class="todo-item__title-wrapper" @click="onClick">
         <span :class="{ done: todoItem.done }"> {{ todoItem?.title }} </span>
@@ -99,7 +99,7 @@ button {
   box-shadow: none;
 }
 
-.todo-item {
+.content {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -179,12 +179,5 @@ button {
   text-decoration: line-through;
   color: #797775;
   // color: var(--font-color-tertiary);
-}
-
-@media (hover: hover) {
-  .todo-item:hover {
-    background-color: #f6f6f5;
-    // background-color: $--bg-hover;
-  }
 }
 </style>

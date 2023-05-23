@@ -89,3 +89,9 @@ html body {
   position: relative;
   line-height: 32px;
 }
+
+.is-dragging {
+  scale: 1.02;
+  background-color: var(--ant-primary-1);
+  transform: scale(1.001);
+}

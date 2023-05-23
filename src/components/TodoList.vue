@@ -3,7 +3,7 @@
   <!-- <button v-if="active < all" @click="clear">清理</button> -->
   <div v-if="todoList.length">
     <transition-group name="flip-list" tag="ul" class="container">
-      <div class="task-item" v-for="(todo, i) in todoList" :key="todo.id">
+      <div class="todoItem" draggable="true" v-for="(todo, i) in todoList" :key="todo.id">
         <TodoItem :data="todo" @on-remove="removeTodo"></TodoItem>
       </div>
     </transition-group>
@@ -24,7 +24,7 @@
 import { useDate, useTodos } from '@/hooks';
 import { Todo, TodoType } from '@/models';
 import dayjs, { Dayjs } from 'dayjs';
-import { getCurrentInstance, onMounted, onUnmounted, ref, watch } from 'vue';
+import { getCurrentInstance, Transition, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 let { todos, clear, showModal, addTodo } = useTodos();
 import TodoItem from "./TodoItem.vue";
@@ -73,6 +73,53 @@ watch(todoList, () => {
 
 onMounted(() => {
   checkRepeatTask();
+
+  const draggables = document.querySelectorAll(".todoItem");
+  const droppables = document.querySelectorAll(".container");
+
+  draggables.forEach((task) => {
+    task.addEventListener("dragstart", () => {
+      task.classList.add("is-dragging");
+    });
+    task.addEventListener("dragend", () => {
+      task.classList.remove("is-dragging");
+    });
+  });
+
+  droppables.forEach((zone) => {
+    zone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+
+      const bottomTask = insertAboveTask(zone, (e as DragEvent).clientY);
+      const curTask = document.querySelector(".is-dragging");
+
+      if (!bottomTask) {
+        curTask && zone.appendChild(curTask);
+      } else {
+        curTask && zone.insertBefore(curTask, bottomTask);
+      }
+    });
+  });
+
+  const insertAboveTask = (zone: Element, mouseY: number) => {
+    const els = zone.querySelectorAll(".todoItem:not(.is-dragging)");
+    let closestTask;
+    let closestOffset = Number.NEGATIVE_INFINITY;
+
+    els.forEach((task: { getBoundingClientRect: () => { top: number; height: number }; }) => {
+      const { top, height } = task.getBoundingClientRect();
+      const offset = mouseY - (top + height / 2);
+
+      if (offset < 0 && offset > closestOffset) {
+        closestOffset = offset;
+        closestTask = task;
+      }
+    });
+
+    return closestTask;
+  };
+
+
 });
 
 function searchTodoList(todoType: string) {
@@ -99,7 +146,7 @@ function searchTodoList(todoType: string) {
 
 function remindHander(todo: Todo) {
   let time = new Date(),
-    intervalId,
+    intervalId: string | number | NodeJS.Timeout | undefined,
     secondsRemaining = (60 - time.getSeconds()) * 1000; // Starting from 0 seconds
   const func = () => {
     const current = dayjs();
@@ -195,7 +242,7 @@ const repeatTodo = (item: Todo) => {
   margin: 2px 24px;
 }
 
-.task-item {
+.todoItem {
   background-color: #fff;
   background-color: $--bg-primary;
   // box-shadow: 0px 0.3px 0.9px rgb(0 0 0 / 10%), 0px 1.6px 3.6px rgb(0 0 0 / 10%);
@@ -203,6 +250,8 @@ const repeatTodo = (item: Todo) => {
 
   margin-bottom: 8px;
   border-radius: 4px;
+
+  transition: all .3s ease;
 
   &:first-child {
     margin-top: 8;
@@ -220,5 +269,17 @@ const repeatTodo = (item: Todo) => {
 .flip-list-leave-to {
   opacity: 0;
   transform: translateX(30px);
+}
+
+.highlight {
+  background-color: pink;
+  color: gray;
+}
+
+@media (hover: hover) {
+  .todoItem:hover {
+    background-color: #f6f6f5;
+    // background-color: $--bg-hover;
+  }
 }
 </style>
