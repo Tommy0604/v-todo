@@ -55,14 +55,14 @@ export default {
 <script lang="ts" setup>
 import { IconFont, range } from "@/shared";
 import dayjs, { Dayjs } from "dayjs";
-import { ref, useSlots } from "vue";
+import { ref, useSlots, watchEffect } from "vue";
 import { Calendar, DateType, RepeatType } from "@/models";
 
 const slots = useSlots()
 
 const hasDefaultSlot = slots.default === undefined;
 
-let dropdownVisible = ref(),
+let dropdownVisible = ref(false),
   duePickerOpen = ref<boolean>(false),
   timePickOpen = ref<boolean>(false);
 
@@ -82,7 +82,14 @@ let props = defineProps<{
   iconName?: string,
   showTimePick?: boolean,
   showCustomItem?: boolean,
+  visible?: boolean,
 }>();
+
+watchEffect(() => {
+  if (props.visible !== undefined) {
+    dropdownVisible.value = props.visible;
+  }
+})
 
 const onFocus = (event) => (dropdownVisible.value = true);
 const onBlur = (event) => {
@@ -103,7 +110,7 @@ const clickMenu = (e) => {
 };
 
 const onDateChange = (date: Dayjs) => {
-  iconRef.value.focus();
+  hasDefaultSlot && iconRef.value.focus();
   dueTime.value = date;
 };
 
@@ -120,19 +127,19 @@ const timeFocus = (e: Event) => {
   e.stopPropagation();
   timePickOpen.value = true;
   subMenuActionType.value = 'click'; // Prevent out-of-focus layers due to time-picker pop-ups
-  iconRef.value.blur();
+  hasDefaultSlot && iconRef.value.blur();
 }
 
 const timeBlur = (e: Event) => {
   e.stopPropagation();
   timePickOpen.value = false;
   subMenuActionType.value = 'hover';
-  iconRef.value.focus();
+  hasDefaultSlot && iconRef.value.focus();
 }
 
 const select = () => console.log('select');
 const panelChange = () => {
-  iconRef.value.focus();
+  hasDefaultSlot && iconRef.value.focus();
 };
 
 // Only (9, 5, 8, 12) are available at this time

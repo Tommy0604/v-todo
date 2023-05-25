@@ -11,8 +11,9 @@
       </div>
       <div class="section">
         <div class="section-item">
-          <DropdownCalendar ref="dropdownRef" :calendarList="calendarList" @clickMenu="clickDue" :showCustomItem="true">
-            <button class="section-innerClick">
+          <DropdownCalendar :calendarList="calendarList" @clickMenu="clickDue" :showCustomItem="true"
+            :visible="visibleDue">
+            <button class="section-innerClick" @click="visibleDue = !visibleDue">
               <div class="section-inner">
                 <div class="section-icon">
                   <icon-font :type="'icon-calendar'" />
@@ -31,8 +32,8 @@
         </div>
         <div class="section-item">
           <DropdownCalendar :calendarList="remindList" @clickMenu="clickRemind" :showTimePick="true"
-            :showCustomItem="true">
-            <button class="section-innerClick">
+            :showCustomItem="true" :visible="visibleRemind">
+            <button class="section-innerClick" @click="visibleRemind = !visibleRemind">
               <div class="section-inner">
                 <div class="section-icon">
                   <icon-font :type="'icon-remind'" />
@@ -47,8 +48,9 @@
           </DropdownCalendar>
         </div>
         <div class="section-item">
-          <DropdownCalendar :calendarList="repeadList" @clickMenu="clickRepeat" :showTimePick="true">
-            <button class="section-innerClick">
+          <DropdownCalendar :calendarList="repeadList" @clickMenu="clickRepeat" :showTimePick="true"
+            :visible="visibleRepeat">
+            <button class="section-innerClick" @click="visibleRepeat = !visibleRepeat">
               <div class="section-inner">
                 <div class="section-icon">
                   <icon-font :type="'icon-repeat'" />
@@ -109,12 +111,17 @@ let pickDateText = ref<string>(transfromDuePipe(data.overdueTime)),
   remindText = ref<string | undefined>(data.remindTime),
   repeatText = ref<string | undefined>(data.repeatType);
 
+let visibleDue = ref(false),
+  visibleRemind = ref(false),
+  visibleRepeat = ref(false);
+
 const emits = defineEmits<{
   (e: 'close', data): void
 }>()
 
 const onClose = (bool: boolean) => {
   emits('close', data);
+  visibleDue.value = visibleRemind.value = visibleRepeat.value = false;
 };
 
 const onDoneChange = () => data.done = !data.done;
@@ -130,6 +137,7 @@ function clickDue(type: string, date?: Dayjs): void {
 
   data.overdueTime = dateFormat?.endOf("d").format();
   pickDateText.value = type;
+  visibleDue.value = visibleRemind.value = visibleRepeat.value = false;
 }
 
 function clickRemind(type: string, date?: Dayjs): void {
@@ -143,10 +151,12 @@ function clickRemind(type: string, date?: Dayjs): void {
 
   data.remindTime = dayjs(dateFormat).format();
   remindText.value = dateFormat;
+  visibleDue.value = visibleRemind.value = visibleRepeat.value = false;
 }
 
 function clickRepeat(type: string): void {
   data.repeatType = repeatText.value = type;
+  visibleDue.value = visibleRemind.value = visibleRepeat.value = false;
 }
 </script>
 
