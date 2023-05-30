@@ -33,7 +33,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory('/v-todo/'),
   routes,
 });
 router.replace(router.currentRoute.value.fullPath)
