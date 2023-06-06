@@ -50,7 +50,17 @@ let route = useRoute();
 //   },
 // });
 
-let todoList = ref<Todo[]>([])
+let todoList = ref<Todo[]>([]);
+let isUpdatingTodoList = ref(false);
+
+let worker;
+
+watch(route, (newRouter,) => {
+  const newRouterName = newRouter?.name?.toString();
+  if (newRouterName) {
+    worker && worker.terminate();
+  }
+});
 
 watch(
   [route, todos.value, todos],
@@ -67,9 +77,8 @@ watch(
   (_val, oldVal) => sortTodoList(_val ? "asc" : "desc"),
   { immediate: true }
 );
-watch(todoList, () => {
-  checkRepeatTask()
-});
+
+watch(isUpdatingTodoList, () => checkRepeatTask());
 
 onMounted(() => {
   checkRepeatTask();
@@ -122,13 +131,24 @@ onMounted(() => {
 
 });
 
+function initWorker() {
+  worker && worker.terminate();
+  worker = new Worker(
+    new URL("../workers/worker.js", import.meta.url),
+    { type: "module" }
+  );
+  worker.addEventListener("message", (e) => {
+    repeatTodo(e.data);
+  });
+}
+
 function searchTodoList(todoType: string) {
   switch (todoType) {
     case TodoType.COMPLETED:
       todoList.value = todos.value.filter((item: Todo) => item.done);
       break;
     case TodoType.ALL:
-      todoList.value = todos.value;
+      todoList.value = todos.value.concat();
       break;
     default: {
       todoList.value = todos.value.filter(
@@ -142,6 +162,7 @@ function searchTodoList(todoType: string) {
     }
       break;
   }
+  isUpdatingTodoList.value = !isUpdatingTodoList.value;
 }
 
 function remindHander(todo: Todo) {
@@ -189,18 +210,21 @@ function sortTodoList(sortType: "asc" | "desc") {
 function checkRepeatTask() {
   const repeat = todoList.value.findIndex((item) => !!item.repeatType);
   if (repeat >= 0 && typeof Worker !== "undefined") {
-    const worker = new Worker(
-      new URL("../workers/worker.js", import.meta.url),
-      { type: "module" }
-    );
+    initWorker();
+    watch(todoList, () => {
+      worker.postMessage({
+        type: "update",
+        todoList: JSON.parse(JSON.stringify(todoList.value)),
+      });
+    }, {
+      flush: 'post'
+    });
+
     const todos = {
       type: "start",
       todoList: JSON.parse(JSON.stringify(todoList.value)),
     };
     worker.postMessage(todos);
-    worker.addEventListener("message", (e) => {
-      repeatTodo(e.data);
-    });
 
     /**
      * Since the webworker is a standalone process,
@@ -219,17 +243,22 @@ function checkRepeatTask() {
 const repeatTodo = (item: Todo) => {
   let newTodo = {
     ...item,
-    overdue: false,
     overdueTime: undefined,
     createTime: undefined,
     remindTime: undefined,
     reminded: undefined,
   };
 
-  item.overdue = true;
-  item.overdueTime = dayjs().format();
+  todoList.value.forEach(todo => {
+    if (todo.id === item.id) {
+      console.log('input id:', item.id, '\rtodo:', todo);
+      todo.overdue = true;
+      todo.overdueTime = dayjs().format();
+    }
+  })
 
   addTodo(newTodo);
+  isUpdatingTodoList.value = !isUpdatingTodoList.value;
 };
 
 </script>

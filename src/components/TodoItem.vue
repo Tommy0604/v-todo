@@ -6,19 +6,18 @@
         <span :class="{ done: todoItem.done }"> {{ todoItem?.title }} </span>
         <div class="meta-data-info-group">
           <span class="meta-data-info" v-if="todoItem.overdueTime">
-            <span class="todo-info__date" :class="isOverdue(todoItem.overdueTime)">
+            <span class="todo-info__date" :class="isOverdue(todoItem)">
               <icon-font :type="'icon-calendar'" :style="{ 'font-size': '1.6rem' }" />
-              <span class="todo-info__label">{{
-                overduePipe(todoItem.overdueTime)
-              }}</span>
+              <span class="todo-info__label">
+                {{ overduePipe(todoItem.overdueTime) }}
+              </span>
             </span>
           </span>
           <span class="meta-data-info" v-if="todoItem.remindTime">
             <span class="todo-info__reminder">
               <icon-font :type="'icon-remind'" :style="{ 'font-size': '1.6rem' }" />
-              <span class="todo-info__label">{{
-                calendarPipe(todoItem.remindTime)
-              }}</span>
+              <span class="todo-info__label">
+                {{ calendarPipe(todoItem.remindTime) }}</span>
             </span>
           </span>
           <span class="meta-data-info" v-if="todoItem.completionTime">
@@ -61,9 +60,9 @@ let props = defineProps<{ data: Todo }>();
 let visible = ref<boolean>(false);
 
 let todoItem = reactive(props.data);
-const isOverdue = (date: string | Dayjs) => {
-  return dayjs(date).isToday() ?
-    "dueToday" : dayjs(date) < dayjs() ?
+const isOverdue = (date: Todo) => {
+  return dayjs(date.overdueTime || null) > dayjs() || dayjs(date.completionTime || null).isToday() ?
+    "dueToday" : dayjs(date.overdueTime) < dayjs() ?
       "overdue" : "";
 }
 

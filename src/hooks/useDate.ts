@@ -30,9 +30,9 @@ function useDate() {
 
   function transfromDuePipe(date: string | Dayjs | undefined) {
     if (!date) return;
-    const isToday = dayjs(date).isSame(dayjs(), 'day');
-    const isTomorrow = dayjs(date).isSame(dayjs().add(1, 'day'), 'day');
-    const isNextWeek = dayjs(date).isSame(dayjs().add(1, 'week'), 'week');
+    const isToday = dayjs(date).isSame(dayjs(), "day");
+    const isTomorrow = dayjs(date).isSame(dayjs().add(1, "day"), "day");
+    const isNextWeek = dayjs(date).isSame(dayjs().add(1, "week"), "week");
     let dateType;
     if (isToday) {
       dateType = DateType.TODAY;
@@ -48,8 +48,8 @@ function useDate() {
     date?: string | number | dayjs.Dayjs | Date | null | undefined
   ): string {
     return i18nDayjs(date).calendar(null, {
-      sameDay: `h:mm A, [${t('calendar.today')}] `, // The same day ( 2:30 AM, Today )
-      nextDay: `h:mm A, [${t('calendar.tomorrow')}]`, // The next day ( 2:30 AM, Tomorrow )
+      sameDay: `h:mm A, [${t("calendar.today")}] `, // The same day ( 2:30 AM, Today )
+      nextDay: `h:mm A, [${t("calendar.tomorrow")}]`, // The next day ( 2:30 AM, Tomorrow )
       nextWeek: "h:mm A, ddd, MMMM D", // The next week ( 2:30 AM, Mon, October 31 )
       lastDay: "h:mm A, MMMM D", // The day before ( 2:30 AM, Yesterday )
       lastWeek: "h:mm A, ddd, MMMM D", // The last week ( 2:30 AM, Mon, XXX 17 )
@@ -59,8 +59,8 @@ function useDate() {
 
   function overduePipe(date: string | Dayjs) {
     return i18nDayjs(date).calendar(null, {
-      sameDay: `[${t('calendar.today')}]`,
-      nextDay: `[${t('calendar.tomorrow')}]`,
+      sameDay: `[${t("calendar.today")}]`,
+      nextDay: `[${t("calendar.tomorrow")}]`,
       nextWeek: "ddd, MMMM D",
       lastDay: "h:mm A, MMMM D",
       lastWeek: "h:mm A, ddd, MMMM D",
@@ -145,12 +145,13 @@ function useDate() {
         icon: "monthly",
         text: RepeatType.MONTHLY,
       },
-      {
-        key: RepeatType.YEARLY,
-        icon: "yearly",
-        text: RepeatType.YEARLY,
-      },
-    ]
+      // feeling not used
+      // {
+      //   key: RepeatType.YEARLY,
+      //   icon: "yearly",
+      //   text: RepeatType.YEARLY,
+      // },
+    ];
   }
 
   return {

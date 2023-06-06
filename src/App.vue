@@ -6,9 +6,9 @@
       </menu>
       <a-layout class="column-right">
         <router-view v-slot="{ Component, route }">
-          <KeepAlive>
+          <!-- <KeepAlive> -->
             <component :is="Component" :key="route.name" />
-          </KeepAlive>
+          <!-- </KeepAlive> -->
         </router-view>
       </a-layout>
     </a-layout>

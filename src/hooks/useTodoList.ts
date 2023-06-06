@@ -17,7 +17,9 @@ type AddOptions = {
 //TODO 待转到 firebase
 function useTodos() {
   watchEffect(() => {
+    if (typeof localStorage !== "undefined") {
     localStorage.setItem("todos", JSON.stringify(todos.value));
+    }
   });
 
   function addTodo({
