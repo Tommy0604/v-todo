@@ -9,7 +9,7 @@
     </transition-group>
   </div>
 
-  <div class="flex-center" v-else>
+  <div class="flex-center empty" v-else>
     <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_iikbn1ww.json" background="rgba(0, 0, 0, 0)"
       speed="1" style="width: 300px; height: 300px" loop autoplay></lottie-player>
   </div>
@@ -310,5 +310,9 @@ const repeatTodo = (item: Todo) => {
     background-color: #f6f6f5;
     // background-color: $--bg-hover;
   }
+}
+
+.empty {
+  height: 100%;
 }
 </style>
