@@ -3,7 +3,6 @@ import { LANG_VALUE, getLanguage } from "../i18n";
 
 import zhCN from "ant-design-vue/es/locale/zh_CN";
 import enUS from "ant-design-vue/es/locale/en_US";
-import { Todo } from "@/models";
 
 const useI18nStore = defineStore('i18nStore', {
   state: () => ({
@@ -23,13 +22,6 @@ const useI18nStore = defineStore('i18nStore', {
   }
 })
 
-const useTodoStore = defineStore('todoStore', {
-  state: () => ({
-    todo: null as Todo | null
-  }),
-})
-
 export {
-  useI18nStore,
-  useTodoStore
+  useI18nStore
 }
