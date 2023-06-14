@@ -1,0 +1,15 @@
+{
+  "name": "V Todo",
+  "short_name": "V Todo",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/shopping-list.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
