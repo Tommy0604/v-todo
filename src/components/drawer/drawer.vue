@@ -20,7 +20,7 @@
                 </div>
                 <div class="section-content">
                   <div class="section-title">
-                    <span class="date">{{ pickDateText ? t(`calendar.${pickDateText}`) : t('footer.calendar') }}</span>
+                    <span class="date">{{ pickDateText ? $t(`calendar.${pickDateText}`) : $t('footer.calendar') }}</span>
                   </div>
                   <div class="section-description">
                     <span class="data"></span>
@@ -40,7 +40,7 @@
                 </div>
                 <div class="section-content">
                   <div class="section-title">
-                    <span class="date"> {{ remindText ? calendarPipe(remindText) : t('footer.remind') }}</span>
+                    <span class="date"> {{ remindText ? calendarPipe(remindText) : $t('footer.remind') }}</span>
                   </div>
                 </div>
               </div>
@@ -57,7 +57,7 @@
                 </div>
                 <div class="section-content">
                   <div class="section-title">
-                    <span class="date"> {{ repeatText ? t(`calendar.${repeatText}`) : t('footer.repeat') }}</span>
+                    <span class="date"> {{ repeatText ? $t(`calendar.${repeatText}`) : $t('footer.repeat') }}</span>
                   </div>
                 </div>
               </div>
@@ -70,7 +70,7 @@
     <template #footer>
       <div class="detailFooter">
         <span class="date">
-          {{ t('created_time', { time: overduePipe(createTime) }) }}
+          {{ $t('created_time', { time: overduePipe(createTime) }) }}
         </span>
       </div>
     </template>
@@ -83,8 +83,6 @@ import { useDate, useTodos } from '@/hooks';
 import { Calendar, DateType, Remind, Repeat, Todo } from '@/models';
 import { Dayjs, dayjs, IconFont } from '@/shared';
 import { ComputedRef, reactive, ref, toRefs, unref } from 'vue';
-import { useI18n } from "vue-i18n";
-const { t } = useI18n();
 let { duePipe, overduePipe, calendarPipe, getCalendarList, getRemindList, getRepeadList, transfromDuePipe } = useDate();
 // const { todo } = useTodos();
 const props = defineProps<{
