@@ -4,6 +4,7 @@ import { timeoutFunc } from "../hooks/useDate";
 import { RepeatType } from "../models";
 
 let todoList = [];
+let intervalId;
 
 onmessage = (e) => {
   todoList = e.data.todoList;
@@ -50,7 +51,7 @@ onmessage = (e) => {
               const isNewMonth = currentMonth !== newMonth;
 
               if (isNewMonth) {
-                console.log("Today is the start of a new month!");
+                postMessage(item);
               }
             }
             break;
