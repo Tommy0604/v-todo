@@ -3,10 +3,10 @@ import {
   createWebHashHistory,
   createWebHistory,
 } from "vue-router";
-import Completed from "../pages/completed.vue";
-import Plans from "../pages/plans.vue";
-import myday from "../pages/myday.vue";
-import All from "../pages/all.vue";
+const Completed = () => import("../pages/completed.vue");
+const Plans = () => import("../pages/plans.vue");
+const myday = () => import("../pages/myday.vue");
+const All = () => import("../pages/all.vue");
 
 const routes = [
   { path: '/', redirect: '/myday' },

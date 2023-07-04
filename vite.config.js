@@ -1,6 +1,11 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { resolve } from "path";
+import { visualizer } from "rollup-plugin-visualizer";
+import Components from "unplugin-vue-components/vite";
+import {
+  AntDesignVueResolver,
+} from 'unplugin-vue-components/resolvers'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -25,6 +30,19 @@ export default defineConfig({
           isCustomElement: (tag) => ["lottie-player"].includes(tag),
         },
       },
+    }),
+    visualizer({
+      open: true,
+      filename: "stats.html", //分析图生成的文件名
+      gzipSize: true, // show gzip size
+      brotliSize: true, // show brotli size
+    }),
+    Components({
+      dts: true,
+      resolvers: [
+        AntDesignVueResolver(),
+      ],
+      include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
     }),
   ],
   css: {

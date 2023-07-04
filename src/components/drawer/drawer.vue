@@ -1,6 +1,6 @@
 <template>
   <!-- :maskStyle="{'visibility': 'visible'}" -->
-  <a-drawer v-model:visible="visible" :headerStyle="{ 'background-color': '#faf9f8' }"
+  <a-drawer :visible="visible" :headerStyle="{ 'background-color': '#faf9f8' }"
     :bodyStyle="{ 'background-color': '#faf9f8' }" :footerStyle="{ 'background-color': '#faf9f8' }" class="custom-class"
     placement="right" @close="onClose">
     <div class="detail">

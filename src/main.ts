@@ -3,7 +3,6 @@ import router from "./router/index";
 import App from "./App.vue";
 
 /* import the ant-design-vue */
-import Antd from "ant-design-vue";
 import 'ant-design-vue/dist/antd.variable.min.css';
 import "./styles/global.scss";
 
@@ -16,7 +15,6 @@ app.config.globalProperties.$AILEMENTE = { size: "large" };
 
 app
   .use(router)
-  .use(Antd)
   .use(i18n)
   .use(createPinia())
   .mount("#app");

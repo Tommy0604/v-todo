@@ -1,7 +1,16 @@
-import DropdownCalendar from "./dropdown/dropdown.vue";
-import Tooltips from "./tooltips/tooltips.vue";
-import TodoList from "./TodoList.vue";
-import Drawer from "./drawer/drawer.vue";
+import { defineAsyncComponent } from "vue";
+const DropdownCalendar = defineAsyncComponent(() =>
+  import('./dropdown/dropdown.vue'),
+)
+const Drawer = defineAsyncComponent(() =>
+  import('./drawer/drawer.vue'),
+)
+const TodoList = defineAsyncComponent(() =>
+  import('./TodoList.vue'),
+)
+const Tooltips = defineAsyncComponent(() =>
+  import('./tooltips/tooltips.vue'),
+)
 export {
   TodoList,
   Tooltips,
