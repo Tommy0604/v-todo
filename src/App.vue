@@ -20,8 +20,6 @@ import { watch } from "vue";
 import { LeftMenu } from "@/layout";
 
 import dayjs from "dayjs";
-import "dayjs/locale/zh-cn";
-dayjs.locale("zh-cn");
 
 import { storeToRefs } from "pinia";
 import { useI18nStore } from "./hooks/useStores";

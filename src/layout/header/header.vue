@@ -47,7 +47,7 @@ import { computed, ref, reactive, onMounted, watchEffect, watch } from "vue";
 import { useRoute } from "vue-router";
 import { TodoType } from "@/models/todo";
 import { ConfigProvider } from "ant-design-vue";
-import { i18nDayjs, setLocale } from "@/hooks/useLocale";
+import { useI18nStore, i18nDayjs, setLocale } from "@/hooks";
 import { LANG_VALUE } from "@/i18n";
 import tooltips from "@/components/tooltips/tooltips.vue";
 
@@ -96,11 +96,13 @@ const colorState = reactive({
   infoColor: "#1890ff",
 });
 
-const checked = ref<boolean>(true);
+const checked = ref<boolean>(useI18nStore().language === LANG_VALUE.Zh);
 
 watch(
   checked,
-  (_val, oldVal) => setLocale(_val ? LANG_VALUE.Zh : LANG_VALUE.En),
+  (_val, oldVal) => {
+    setLocale(_val ? LANG_VALUE.Zh : LANG_VALUE.En)
+  },
   { immediate: true }
 );
 

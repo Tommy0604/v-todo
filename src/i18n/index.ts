@@ -24,7 +24,7 @@ function getLanguage() {
   const language = navigator.language.toLowerCase()
   const locales = [LANG_VALUE.En, LANG_VALUE.Zh]
   for (const locale of locales) {
-    if (language.indexOf(locale) > -1) {
+    if (locale.includes(language)) {
       return locale
     }
   }
