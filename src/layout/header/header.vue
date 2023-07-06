@@ -65,11 +65,18 @@ const onSort = () => emits('onSort');
 
 let iconType = ref<string>();
 let todayHint = ref<string | null>();
+let isZH;
+watch(() => useI18nStore().language, (_val,) => {
+  isZH = _val === LANG_VALUE.Zh;
+}, {
+  immediate: true,
+})
+
 let title = computed(() => {
   switch (route.name) {
     case TodoType.MYDAY:
       iconType.value = "icon-sun";
-      todayHint.value = i18nDayjs().format("dddd, MMMM D");
+      todayHint.value = i18nDayjs().format(isZH ? "MMMM D, dddd" : "dddd, MMMM D");
       return "my_day";
     case TodoType.PLANS:
       iconType.value = "icon-calendar";
