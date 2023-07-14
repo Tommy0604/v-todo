@@ -1,7 +1,7 @@
 <template>
   <a-dropdown :trigger="['click']" :overlayClassName="'date-overlay'" :visible="dropdownVisible">
     <slot>
-      <icon-font ref="iconRef" :type="iconName || ''" @focus="onFocus($event)" @blur="onBlur($event)" />
+      <icon-font ref="iconRef" :type="iconName || ''" @focus="onFocus" @blur="onBlur" />
     </slot>
     <template #overlay>
       <a-menu @click="clickMenu" :triggerSubMenuAction="subMenuActionType">
@@ -75,6 +75,7 @@ let subMenuActionType = ref<'click' | 'hover'>('hover');
 
 const emit = defineEmits<{
   (e: 'clickMenu', type: string, value?: Dayjs): void,
+  (e: 'visibleChange'): void,
 }>();
 
 let props = defineProps<{
@@ -91,8 +92,8 @@ watchEffect(() => {
   }
 })
 
-const onFocus = (event) => (dropdownVisible.value = true);
-const onBlur = (event) => {
+const onFocus = () => (dropdownVisible.value = true);
+const onBlur = () => {
   if (duePickerOpen.value) return;
   dropdownVisible.value = false;
 };

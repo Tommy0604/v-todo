@@ -13,7 +13,7 @@
         <div class="section-item">
           <DropdownCalendar :calendarList="calendarList" @clickMenu="clickDue" :showCustomItem="true"
             :visible="visibleDue">
-            <button class="section-innerClick" @click="visibleDue = !visibleDue">
+            <button class="section-innerClick" @click="visibleRemind = visibleRepeat = false, visibleDue = !visibleDue">
               <div class="section-inner">
                 <div class="section-icon">
                   <icon-font :type="'icon-calendar'" />
@@ -33,7 +33,8 @@
         <div class="section-item">
           <DropdownCalendar :calendarList="remindList" @clickMenu="clickRemind" :showTimePick="true"
             :showCustomItem="true" :visible="visibleRemind">
-            <button class="section-innerClick" @click="visibleRemind = !visibleRemind">
+            <button class="section-innerClick"
+              @click="visibleDue = visibleRepeat = false, visibleRemind = !visibleRemind">
               <div class="section-inner">
                 <div class="section-icon">
                   <icon-font :type="'icon-remind'" />
@@ -50,7 +51,8 @@
         <div class="section-item">
           <DropdownCalendar :calendarList="repeadList" @clickMenu="clickRepeat" :showTimePick="true"
             :visible="visibleRepeat">
-            <button class="section-innerClick" @click="visibleRepeat = !visibleRepeat">
+            <button class="section-innerClick"
+              @click="visibleDue = visibleRemind = false, visibleRepeat = !visibleRepeat">
               <div class="section-inner">
                 <div class="section-icon">
                   <icon-font :type="'icon-repeat'" />
