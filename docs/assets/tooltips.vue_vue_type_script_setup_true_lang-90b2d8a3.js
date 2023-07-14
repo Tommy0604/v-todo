@@ -1,0 +1,2 @@
+import{d as o,a as s,n as l,w as n,b0 as i,bd as r}from"./index-f4f2c4d9.js";const _={name:"Tooltips"},c=o({..._,props:{title:String,isDefault:{type:Boolean,default:!0}},setup(t){return(e,p)=>{const a=r;return s(),l(a,{title:t.title,overlayClassName:t.isDefault?"tips":""},{default:n(()=>[i(e.$slots,"default")]),_:3},8,["title","overlayClassName"])}}});export{c as _};
+//# sourceMappingURL=tooltips.vue_vue_type_script_setup_true_lang-90b2d8a3.js.map
