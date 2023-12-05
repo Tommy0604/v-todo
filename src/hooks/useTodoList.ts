@@ -18,7 +18,7 @@ type AddOptions = {
 function useTodos() {
   watchEffect(() => {
     if (typeof localStorage !== "undefined") {
-    localStorage.setItem("todos", JSON.stringify(todos.value));
+      localStorage.setItem("todos", JSON.stringify(todos.value));
     }
   });
 

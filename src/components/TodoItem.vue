@@ -53,6 +53,8 @@ import { Todo } from "@/models";
 import { Dayjs, dayjs, IconFont } from "@/shared";
 import { useDate } from "@/hooks";
 import { Drawer } from ".";
+import { CheckboxChangeEvent } from "ant-design-vue/lib/checkbox/interface";
+
 let { calendarPipe, overduePipe } = useDate();
 const emits = defineEmits<{ (e: 'onRemove', id: string): void }>()
 
@@ -66,7 +68,7 @@ const isOverdue = (date: Todo) => {
       "overdue" : "";
 }
 
-const onDoneChange = (e: Event, data: Todo) => {
+const onDoneChange = (e: CheckboxChangeEvent, data: Todo) => {
   data.done = !data.done;
   data.completionTime = data.done ? dayjs().format() : "";
 };

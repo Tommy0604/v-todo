@@ -32,7 +32,7 @@
                   <div class="time-pick" v-if="showTimePick">
                     <a-time-picker ref="timePickRef" use12-hours :value="timePick" :minute-step="20" format="HH:mm"
                       :disabledHours="disabledHours" :hideDisabledOptions="true" @focus="timeFocus" @blur="timeBlur"
-                      @change="(time) => timePick = time" />
+                      @change="(time) => (timePick = time as Dayjs)" />
                   </div>
                   <div class="btn-save">
                     <a-button type="primary" @click="onSave">Save</a-button>
@@ -110,9 +110,9 @@ const clickMenu = (e) => {
   }
 };
 
-const onDateChange = (date: Dayjs) => {
+const onDateChange = (date: Dayjs | string) => {
   hasDefaultSlot && iconRef.value.focus();
-  dueTime.value = date;
+  dueTime.value = dayjs(date);
 };
 
 const onSave = (e: Event) => {
