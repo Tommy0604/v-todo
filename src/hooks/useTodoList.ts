@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { nanoid } from "nanoid";
-import { ref, computed, watchEffect, Ref } from "vue";
-import { Todo, TodoType } from "../models/todo";
+import { ref, watchEffect, Ref } from "vue";
+import { Todo } from "../models/todo";
 
 let todos = useStorage("todos", []);
 let showModal = ref(false);
@@ -55,7 +55,7 @@ function useTodos() {
 }
 
 function useStorage(name: string, value: Array<Todo> = []): Ref<Array<Todo>> {
-  let data;
+  let data = ref(value);
   // TODO: Unable to get window because of web worker
   if (typeof localStorage !== "undefined") {
     data = ref<Array<Todo>>(JSON.parse(localStorage.getItem(name) || "[]"));

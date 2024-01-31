@@ -4,6 +4,7 @@ import { timeoutFunc } from "../hooks/useDate";
 import { RepeatType } from "../models";
 
 let todoList = [];
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let intervalId;
 
 onmessage = (e) => {

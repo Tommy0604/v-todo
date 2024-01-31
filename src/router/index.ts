@@ -1,6 +1,5 @@
 import {
   createRouter,
-  createWebHashHistory,
   createWebHistory,
 } from "vue-router";
 const Completed = () => import("../pages/completed.vue");

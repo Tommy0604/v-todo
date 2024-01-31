@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 import "dayjs/locale/en";
-import { ComputedRef, computed } from "vue";
+import { computed } from "vue";
 
 export function setLocale(lang: LANG_VALUE) {
   const i18nStore = useI18nStore()

@@ -95,7 +95,7 @@ function useDate() {
   }
 
   function getCalendarList() {
-    let day = dayjs().day();
+    const day = dayjs().day();
     return computed(() => [
       {
         key: DateType.TODAY,
@@ -202,8 +202,8 @@ function timeoutFunc(
   runNow && func();
 
   let intervalId;
-  let nowTime = new Date().getTime();
-  let timePoints = time.split(":").map((i) => parseInt(i)) || ["00"];
+  const nowTime = new Date().getTime();
+  const timePoints = time.split(":").map((i) => parseInt(i)) || ["00"];
   let recent = new Date().setHours(...(timePoints as [number, ...number[]]));
 
   recent >= nowTime || (recent += 24 * 3600000);
