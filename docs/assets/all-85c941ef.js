@@ -1,2 +1,0 @@
-import{d as l,r as u,o as _,a as c,c as d,b as e,w as t,u as a,F as f,L as i,e as m}from"./index-8b3cc893.js";import{T as p,a as S,b as L}from"./footer-0adfa1ab.js";const B=l({__name:"all",setup(v){let o=u(!1);const n=()=>o.value=!o.value;return _(()=>{o.value=!1}),(y,T)=>{const s=i,r=m;return c(),d(f,null,[e(s,null,{default:t(()=>[e(a(p),{isSort:a(o),onOnSort:n},null,8,["isSort"])]),_:1}),e(r,null,{default:t(()=>[e(a(S),{isSort:a(o)},null,8,["isSort"])]),_:1}),e(a(L))],64)}}});export{B as default};
-//# sourceMappingURL=all-85c941ef.js.map

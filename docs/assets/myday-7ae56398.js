@@ -1,2 +1,0 @@
-import{d as l,r as u,o as _,a as c,c as d,b as e,w as t,u as a,F as f,L as m,e as i}from"./index-8b3cc893.js";import{T as p,a as S,b as y}from"./footer-0adfa1ab.js";const B=l({__name:"myday",setup(L){let o=u(!1);const n=()=>o.value=!o.value;return _(()=>{o.value=!1}),(v,T)=>{const s=m,r=i;return c(),d(f,null,[e(s,null,{default:t(()=>[e(a(p),{isSort:a(o),onOnSort:n},null,8,["isSort"])]),_:1}),e(r,null,{default:t(()=>[e(a(S),{isSort:a(o)},null,8,["isSort"])]),_:1}),e(a(y))],64)}}});export{B as default};
-//# sourceMappingURL=myday-7ae56398.js.map
