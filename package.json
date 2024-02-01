@@ -7,12 +7,12 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "jest",
-    "lint": "eslint src --ext .js,.ts",
+    "lint": "eslint --fix --ext .ts,.vue src",
     "prepare": "husky install",
     "lint-staged": "lint-staged"
   },
   "lint-staged": {
-    "*.{ts,tsx}": [
+    "*.{ts,vue}": [
       "echo 'begin to lint staged ts or tsx file'",
       "eslint --fix"
     ]
@@ -52,6 +52,7 @@
     "ts-jest": "^26.5.6",
     "unplugin-vue-components": "^0.25.1",
     "vite": "^4.3.5",
+    "vue-eslint-parser": "^9.4.2",
     "vue-jest": "^5.0.0-alpha.10"
   }
 }

@@ -88,7 +88,7 @@ import { ComputedRef, reactive, ref, toRefs, unref } from 'vue';
 let { duePipe, overduePipe, calendarPipe, getCalendarList, getRemindList, getRepeadList, transfromDuePipe } = useDate();
 // const { todo } = useTodos();
 const props = defineProps<{
-  visible: Boolean,
+  visible: boolean,
   todo: Todo
 }>()
 // todo.value!
@@ -119,7 +119,7 @@ const emits = defineEmits<{
   (e: 'close', data): void
 }>()
 
-const onClose = (bool: boolean) => {
+const onClose = () => {
   emits('close', data);
   visibleDue.value = visibleRemind.value = visibleRepeat.value = false;
 };

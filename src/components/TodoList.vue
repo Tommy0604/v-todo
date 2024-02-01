@@ -30,7 +30,7 @@ let { todos, clear, showModal, addTodo } = useTodos();
 import TodoItem from "./TodoItem.vue";
 const instance = getCurrentInstance();
 const props = defineProps<{
-  isSort: Boolean,
+  isSort: boolean,
 }>()
 
 let route = useRoute();

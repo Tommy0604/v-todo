@@ -30,7 +30,7 @@
         </tooltips>
       </div>
       <input class="theme-box" type="color" :value="colorState.primaryColor"
-        @input="(e) => onColorChange('primaryColor', e)" />
+        @input="(e) => onColorChange('primaryColor', e as ChangeEvent)" />
     </div>
   </div>
 </template>
@@ -50,6 +50,7 @@ import { ConfigProvider } from "ant-design-vue";
 import { useI18nStore, i18nDayjs, setLocale } from "@/hooks";
 import { LANG_VALUE } from "@/i18n";
 import tooltips from "@/components/tooltips/tooltips.vue";
+import { ChangeEvent } from "ant-design-vue/es/_util/EventInterface";
 
 let route = useRoute();
 
@@ -119,7 +120,7 @@ onMounted(() => {
   });
 });
 
-const onColorChange = (type: string, e: any) => {
+const onColorChange = (type: string, e: ChangeEvent) => {
   Object.assign(colorState, { [type]: e.target.value });
   ConfigProvider.config({
     theme: colorState,
